@@ -1,0 +1,544 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>親に頼まなくても、島じゅうへ。</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;700&family=Zen+Kaku+Gothic+New:wght@400;700&display=block">
+<style>
+@page { size: A4 landscape; margin: 0; }
+:root {
+  --ink: #1E1E1E; --gray: #8A8A8A; --rule: #DADADA;
+  --ai: #2F5D8C; --ai-l: #E7EEF6; --or: #D9772B; --or-l: #FBEEE2;
+  --mincho: "Shippori Mincho", "Hiragino Mincho ProN", "Noto Serif JP", serif;
+  --gothic: "Zen Kaku Gothic New", "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Noto Sans JP", sans-serif;
+}
+* { box-sizing: border-box; margin: 0; padding: 0;
+    -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+html, body { background: #FFFFFF; }
+/* 小さな文字でも送り幅をピクセルに丸めない（印刷用に、フォント本来の字幅で組む） */
+html { text-rendering: geometricPrecision; }
+body { font-family: var(--gothic); font-weight: 400; color: var(--ink);
+       font-size: 9pt; line-height: 1.68; }
+.page { position: relative; width: 297mm; height: 210mm; overflow: hidden; background: #FFFFFF; }
+
+p, h1, h2, h3 { line-break: strict; word-break: normal; overflow-wrap: normal; }
+p { text-wrap: pretty; }
+.nw { white-space: nowrap; }
+b { font-weight: 700; }
+
+/* 上部の帯 */
+.band { position: absolute; left: 11mm; top: 10mm; width: 275mm; height: 30mm; }
+.tblock { position: absolute; left: 0; top: 0; width: 152mm; }
+.title { font-family: var(--mincho); font-weight: 700; font-size: 28pt; line-height: 1.45;
+         letter-spacing: 0.02em; font-feature-settings: "palt"; }
+.title .k { display: inline; }
+.title .acc { color: var(--or); }
+.subtitle { font-family: var(--mincho); font-weight: 400; font-size: 10.5pt; line-height: 1.5;
+            margin-top: 1.3mm; }
+.rblock { position: absolute; right: 0; top: 0; width: 112mm; }
+.meta { font-size: 7.5pt; line-height: 1.4; text-align: right; color: var(--ink); }
+.meta .region { color: var(--gray); margin-right: 4mm; }
+.meta .name { font-weight: 700; font-size: 8pt; }
+.lead { font-size: 9pt; line-height: 1.7; margin-top: 3.2mm; }
+
+/* 3つの段 */
+.col { position: absolute; top: 44.5mm; height: 145mm; display: flex; flex-direction: column; }
+.c1 { left: 11mm; width: 85mm; }
+.c2 { left: 102mm; width: 97mm; }
+.c3 { left: 205mm; width: 81mm; }
+h2 { font-family: var(--mincho); font-weight: 700; font-size: 12pt; line-height: 1.35;
+     letter-spacing: 0.08em; font-feature-settings: "palt"; margin-bottom: 2.2mm; }
+.col p.body { text-indent: 1em; }
+.col p.body + p.body { margin-top: 0.5mm; }
+figure { display: block; }
+figure svg { display: block; overflow: visible; }
+.figA { margin: 2.8mm 0 3.0mm; }
+.figC { margin-top: 3.0mm; }
+.future { font-family: var(--mincho); font-weight: 700; font-size: 13pt; line-height: 1.5;
+          margin-bottom: 3.6mm; }
+.figB { margin-bottom: 3.6mm; }
+
+/* 右段：縦の時間軸 */
+.tl { position: relative; flex: 1; display: flex; flex-direction: column; padding-left: 3.4mm; }
+.tl svg.axis { position: absolute; left: 0; top: 0; overflow: visible; }
+.ms { font-size: 7.5pt; line-height: 1.35; display: flex; align-items: baseline; }
+.ms .yr { font-weight: 700; margin-right: 1.6mm; }
+.ms .bl { display: inline-block; width: 0; height: 0; vertical-align: baseline; }
+.ms.gray { color: var(--gray); }
+.ms.gray .yr { font-weight: 400; }
+.ms.end { color: var(--or); }
+.ms.end .lb { font-weight: 700; }
+.ms + .act { margin-top: 1.0mm; }
+.act { display: flow-root; }
+.act + .act { margin-top: 2.2mm; }
+.act + .ms { margin-top: 2.5mm; }
+.ms + .ms { margin-top: 1.6mm; }
+.ms.push { margin-top: auto; }
+.act .ah { display: flex; align-items: center; margin-bottom: 0.75mm; }
+.act svg.icon { flex: none; margin-right: 2.6mm; }
+h3 { font-size: 10pt; font-weight: 700; line-height: 1.5; }
+.act p { text-indent: 0; }
+
+/* 出典 */
+.src { position: absolute; left: 11mm; width: 275mm; bottom: 9.5mm; font-size: 6.5pt;
+       line-height: 1.5; color: var(--gray); }
+</style>
+</head>
+<body>
+<div class="page" id="page">
+
+<header class="band">
+  <div class="tblock">
+    <h1 class="title">親に頼まなくても、<span class="acc">島じゅう</span>へ。</h1>
+    <p class="subtitle">2050年の西之表で、運転しない人が、運転する人と同じだけ動けるように。</p>
+  </div>
+  <div class="rblock">
+    <p class="meta"><span class="region">対象地域：鹿児島県西之表市（種子島）</span><span class="name">氏名：【要記入：氏名フルネーム】</span></p>
+    <p class="lead">私は小学生のころまで、種子島の西之表で育った。どこへ行くにも親に頼む必要があり、休日に友達と集まるだけでも一苦労だった。中学で東京に移ると、行ける場所が一気に広がった。同時に気づいたのは、親に話を通さなくても、自分で決めて出かけられるということだった。</p>
+  </div>
+</header>
+
+<section class="col c1" id="col1">
+  <h2>2050年の西之表を想像する</h2>
+  <p class="body">島の移動を支えているのは、バスではなく家族の車だ。西之表市では通勤・通学の<b>82.9％</b>が自家用車で、乗合バスは<b>0.3％</b>にとどまる。市内の種子島高校では生徒の<b>70.4％</b>が車で送られ、送る保護者の<b>42.7％</b>はそのためだけに往復している。</p>
+  <p class="body">その車を運転する世代が減っていく。2045年には市の15〜64歳が2020年のほぼ半分になり、65歳以上を下回る。<b><span class="nw">送る</span>側は、送られる側よりも速く減る。</b>2050年の人口は、2020年の約6割になる見込みだ。</p>
+  <figure class="figA"><svg id="figA" xmlns="http://www.w3.org/2000/svg"></svg></figure>
+  <p class="body">何もしなければ、2050年の子どもの行動範囲は今よりさらに狭くなる。しかも、それは数字に表れない。子どもにとって外出は、毎回が親への相談だ。<b>言い出しにくい外出は、相談される前に消えていく。</b>交通計画の住民調査も対象は18歳以上で、子どもの「行けなかった」はどこにも記録されていない。</p>
+  <figure class="figC"><svg id="figC" xmlns="http://www.w3.org/2000/svg"></svg></figure>
+</section>
+
+<section class="col c2" id="col2">
+  <h2>実現したい未来</h2>
+  <p class="future">子どもが親に頼まなくても島じゅうへ行け、<br>運転をやめた高齢者も同じだけ動ける西之表。</p>
+  <figure class="figB"><svg id="figB" xmlns="http://www.w3.org/2000/svg"></svg></figure>
+  <p class="body">鍵は、運転しない人どうしで、車と時間を分け合うことだ。高齢者の外出は午前に集まり、子どもが動きたいのは放課後と休日だ。市街地巡回バス「わかさ姫」は、調査日の利用者31人のうち29人が13時前の便に乗り、最終便は15時台に出る。中学校のスクールバスには年約3,700万円がかかっているが、走るのは登下校のためで、一般の人は乗れない。<b>車は走っている。ただ、乗りたい人の時間に走っていない。</b></p>
+  <p class="body">2050年には、同じ車が、朝は通院する高齢者を、放課後は部活や友達の家へ向かう中学生を運ぶ。子どもは自分で予約し、「乗った」「着いた」は保護者に届く。</p>
+  <p class="body">2050年の西之表を担うのは、いま島で育っている子どもたちだ。島を「行けなかった場所」ではなく「自分で動けた場所」として覚えた子どもは、島に戻る理由を持てると私は考える。</p>
+</section>
+
+<section class="col c3" id="col3">
+  <h2>そのために、今から始めること</h2>
+  <div class="tl" id="tl">
+    <svg class="axis" id="figD" xmlns="http://www.w3.org/2000/svg"></svg>
+    <div class="ms" data-ms="start"><span class="yr">2026年度</span><i class="bl"></i></div>
+    <div class="act">
+      <div class="ah"><svg class="icon" id="icon1" xmlns="http://www.w3.org/2000/svg"></svg><h3>①数える</h3></div>
+      <p>中学生に、行きたかったのに行けなかった場所と時間を、1か月記録してもらう。今の交通計画は2028年3月までだ。次の計画づくりに、子どもの声を最初から入れる。</p>
+    </div>
+    <div class="act">
+      <div class="ah"><svg class="icon" id="icon2" xmlns="http://www.w3.org/2000/svg"></svg><h3>②試す</h3></div>
+      <p>スクールバスの下校便や、午後に空いている車両で「放課後便」を走らせる。国は2026年度からの6年間で、休日の部活動を原則すべて地域のクラブへ移す方針を示し、移動手段の確保も課題に挙げている。<b>試すなら今だ。</b></p>
+    </div>
+    <div class="ms"><span class="yr">2028年</span><i class="bl"></i><span class="lb">次の交通計画</span></div>
+    <div class="ms"><span class="yr">2030年代</span><i class="bl"></i></div>
+    <div class="act">
+      <div class="ah"><svg class="icon" id="icon3" xmlns="http://www.w3.org/2000/svg"></svg><h3>③備える</h3></div>
+      <p>島の交通事業者の多くは、すでに運転手不足を抱えている。一方で種子島では2024年度、電気が余って太陽光・風力の発電を止めた日が75日あった。この余る昼の電気で走る電動アシスト自転車などを学校や公民館に置き、運転手のいらない移動を育てる。</p>
+    </div>
+    <div class="ms gray push"><span class="yr">2045年</span><i class="bl"></i><span class="lb">15〜64歳が65歳以上を下回る</span></div>
+    <div class="ms end" data-ms="end"><span class="yr">2050年</span><i class="bl"></i><span class="lb">島じゅうへ</span></div>
+  </div>
+</section>
+
+<footer class="src" id="src">出典：種子島地域公共交通計画（2023年5月、西之表市・中種子町・南種子町）。年齢別の比較は同計画所収の国立社会保障・人口問題研究所2018年推計、2050年の人口は同2023年推計による。部活動は文部科学省のガイドライン（2025年12月）、出力抑制は電力広域的運営推進機関の検証資料（2025年8月）による。</footer>
+
+</div>
+
+<script>
+/* ===== 共通 ===== */
+const PX_PER_PT = 96 / 72;
+const C = { ink: '#1E1E1E', gray: '#8A8A8A', rule: '#DADADA', ai: '#2F5D8C', aiL: '#E7EEF6',
+            or: '#D9772B', orL: '#FBEEE2', white: '#FFFFFF' };
+const GOTHIC = 'Zen Kaku Gothic New';
+const SW = 1;                       // 全図共通の線幅（pt）≒0.35mm
+const NS = 'http://www.w3.org/2000/svg';
+const r2 = v => Math.round(v * 100) / 100;
+
+function E(parent, tag, attrs) {
+  const e = document.createElementNS(NS, tag);
+  for (const k in attrs) e.setAttribute(k, typeof attrs[k] === 'number' ? r2(attrs[k]) : attrs[k]);
+  if (parent) parent.appendChild(e);
+  return e;
+}
+function T(parent, x, y, s, o = {}) {
+  const a = { x, y, 'font-family': GOTHIC, 'font-size': o.size || 7.5, fill: o.fill || C.ink };
+  if (o.weight === 'bold') a['font-weight'] = 'bold';
+  if (o.anchor) a['text-anchor'] = o.anchor;
+  const e = E(parent, 'text', a);
+  e.textContent = s;
+  return e;
+}
+const tw = e => e.getComputedTextLength();
+function frame(svg, W, H, vbW, vbH) {
+  svg.setAttribute('width', r2(W) + 'pt');
+  svg.setAttribute('height', r2(H) + 'pt');
+  svg.setAttribute('viewBox', `0 0 ${r2(vbW || W)} ${r2(vbH || H)}`);
+}
+function widthPt(el) { return el.getBoundingClientRect().width / PX_PER_PT; }
+function line(p, x1, y1, x2, y2, stroke, o = {}) {
+  const a = { x1, y1, x2, y2, stroke, 'stroke-width': o.sw || SW, 'stroke-linecap': 'round' };
+  if (o.dash) a['stroke-dasharray'] = o.dash;
+  return E(p, 'line', a);
+}
+function chevron(p, x, y, dir, stroke, sw) {   // 矢じり（右向き dir=0、下向き dir=1）
+  const d = dir === 0 ? `M${r2(x - 2.6)},${r2(y - 2.1)} L${r2(x)},${r2(y)} L${r2(x - 2.6)},${r2(y + 2.1)}`
+                      : `M${r2(x - 2.1)},${r2(y - 2.6)} L${r2(x)},${r2(y)} L${r2(x + 2.1)},${r2(y - 2.6)}`;
+  return E(p, 'path', { d, fill: 'none', stroke, 'stroke-width': sw || SW, 'stroke-linecap': 'round', 'stroke-linejoin': 'round' });
+}
+// 人物：丸い頭と肩だけ。s=1 が大人、子どもは 0.75。(cx, base) は肩の底辺の中央。
+function person(p, cx, base, s, stroke, sw) {
+  const w = 4.9 * s, h = 5.4 * s, hr = 2.35 * s, hy = base - h - 0.9 * s - hr;
+  const g = E(p, 'g', {});
+  E(g, 'path', { d: `M${r2(cx - w)},${r2(base)} C${r2(cx - w)},${r2(base - h * 0.78)} ${r2(cx - w * 0.6)},${r2(base - h)} ${r2(cx)},${r2(base - h)} C${r2(cx + w * 0.6)},${r2(base - h)} ${r2(cx + w)},${r2(base - h * 0.78)} ${r2(cx + w)},${r2(base)} Z`,
+                 fill: C.white, stroke, 'stroke-width': sw || SW, 'stroke-linejoin': 'round' });
+  E(g, 'circle', { cx, cy: hy, r: hr, fill: C.white, stroke, 'stroke-width': sw || SW });
+  return g;
+}
+const fmt = n => n.toLocaleString('en-US');
+const FIG = {};   // 検証用に図の計算結果を保持
+
+/* ===== 図A 送る側と、送られる側 ===== */
+const DATA_A = [
+  { year: '2020年', work: 7284, old: 5598, kid: 1820 },
+  { year: '2045年', work: 3857, old: 4413, kid: 1026 },
+];
+function drawFigA() {
+  const svg = document.getElementById('figA');
+  const W = widthPt(svg.parentNode);
+  const bh = 9.2, pairGap = 2, groupGap = 12, top = 21.5;
+  const H = top + 2 * (2 * bh + pairGap) + groupGap + 13.3;
+  frame(svg, W, H);
+  T(svg, 0, 8.4, '送る側と、送られる側（西之表市）', { size: 8, weight: 'bold' });
+  T(svg, W, 7.2, '15〜64歳100人あたりの、', { size: 7, anchor: 'end' });
+  T(svg, W, 15.6, '15歳未満と65歳以上', { size: 7, anchor: 'end' });
+
+  const ratio = d => Math.round((d.old + d.kid) / d.work * 100);
+  // 列幅は文字幅を実測して決める
+  const probe = T(svg, 0, -50, '15〜64歳（送る側）', { size: 7 });
+  const labW = tw(probe); probe.remove();
+  const probe2 = T(svg, 0, -50, '141人', { size: 11, weight: 'bold' });
+  const ratW = tw(probe2); probe2.remove();
+  const yearW = 27, barX = yearW;
+  const labX = W - ratW - 9 - labW;
+  const barMax = labX - 5 - barX;
+  const maxV = Math.max(...DATA_A.map(d => Math.max(d.work, d.old + d.kid)));
+  const k = barMax / maxV;
+  const out = { k, bars: [], ratios: [] };
+
+  DATA_A.forEach((d, i) => {
+    const yU = top + i * (2 * bh + pairGap + groupGap), yL = yU + bh + pairGap;
+    const mid = yU + bh + pairGap / 2;
+    const wU = d.work * k, wO = d.old * k, wK = d.kid * k;
+    T(svg, 0, mid + 2.8, d.year, { size: 7.5, weight: 'bold' });
+    E(svg, 'rect', { x: barX, y: yU, width: wU, height: bh, fill: C.ink });
+    E(svg, 'rect', { x: barX, y: yL, width: wO, height: bh, fill: C.ai });
+    E(svg, 'rect', { x: barX + wO, y: yL, width: wK, height: bh, fill: C.or });
+    out.bars.push({ year: d.year, work: [d.work, wU], old: [d.old, wO], kid: [d.kid, wK] });
+    const by = h => h + bh / 2 + 2.55;
+    T(svg, barX + wU - 3, by(yU), fmt(d.work), { size: 7, weight: 'bold', fill: C.white, anchor: 'end' });
+    T(svg, barX + wO - 3, by(yL), fmt(d.old), { size: 7, weight: 'bold', fill: C.white, anchor: 'end' });
+    const kt = T(svg, 0, by(yL), fmt(d.kid), { size: 7, weight: 'bold', fill: C.white });
+    if (tw(kt) + 5 <= wK) { kt.setAttribute('x', r2(barX + wO + wK / 2)); kt.setAttribute('text-anchor', 'middle'); }
+    else { kt.setAttribute('x', r2(barX + wO + wK + 2.5)); kt.setAttribute('fill', C.or); }
+    if (i === 0) {
+      T(svg, barX + 3, by(yL), '65歳以上', { size: 7, fill: C.white });
+      T(svg, barX + wO, yL + bh + 8.2, '15歳未満', { size: 7, fill: C.or });
+      T(svg, labX, by(yU), '15〜64歳（送る側）', { size: 7 });
+      T(svg, labX - 3.5, by(yL), '（送られる側）', { size: 7 });
+    }
+    const rv = ratio(d);
+    out.ratios.push(rv);
+    T(svg, W, mid + 4.1, rv + '人', { size: 11, weight: 'bold', anchor: 'end' });
+  });
+  T(svg, 0, H - 3.2, '国立社会保障・人口問題研究所2018年推計', { size: 7, fill: C.gray });
+  FIG.A = out;
+}
+
+/* ===== 図B 同じ車を、時間で分け合う ===== */
+const DATA_B = [
+  ['9:30', 11], ['10:00', 4], ['10:30', 4], ['11:00', 5], ['11:30', 1], ['12:00', 3],
+  ['12:30', 1], ['13:30', 1], ['14:00', 1], ['14:30', 0], ['15:00', 0], ['15:30', 0],
+];
+function drawFigB() {
+  const svg = document.getElementById('figB');
+  const W = widthPt(svg.parentNode);
+  const X0 = 6, chainW = 82;
+  const K = (W - chainW - X0) / 13;              // 1時間あたりの幅。19時が W-chainW にくる
+  const x = h => X0 + (h - 6) * K;               // 上下の段で共通の座標計算
+  const hm = s => { const [h, m] = s.split(':').map(Number); return h + m / 60; };
+  const yTitle = 9, yL1 = 23, yL2 = 32, bandT = 36, bandB = 61, busY = (bandT + bandB) / 2;
+  const yNote = 71, yTick = 84, yLow = 99, carY = 117.5, carH = 4.4, H = 127;
+  frame(svg, W, H);
+
+  T(svg, 0, yTitle, '同じ車を、時間で分け合う', { size: 9, weight: 'bold' });
+
+  // --- 上段「いま」
+  T(svg, 0, yL2, 'いま', { size: 8.5, weight: 'bold' });
+  E(svg, 'rect', { x: x(9), y: bandT, width: x(13) - x(9), height: bandB - bandT, fill: C.aiL });
+  E(svg, 'rect', { x: x(15.5), y: bandT, width: x(19) - x(15.5), height: bandB - bandT, fill: C.orL });
+  T(svg, x(9), yL2, '高齢者の通院・買い物', { size: 7.5, fill: C.ai });
+  T(svg, x(15.5), yL1, '放課後・休日', { size: 7.5, fill: C.or });
+  T(svg, x(15.5) - 3.75, yL2, '（子どもが動きたい時間）', { size: 7.5, fill: C.or });
+
+  // わかさ姫：9時30分〜16時ごろの細い線と、出発時刻の点（面積∝利用者数）
+  line(svg, x(9.5), busY, x(16), busY, C.ai);
+  const N = DATA_B.map(d => d[1]);
+  const nMax = Math.max(...N);
+  const minGap = K / 2;                          // 30分の間隔
+  // 隣り合う点が重ならない最大半径（r ∝ √n）
+  let Rmax = Infinity;
+  for (let i = 1; i < N.length; i++) {
+    const dt = (hm(DATA_B[i][0]) - hm(DATA_B[i - 1][0])) * K;
+    const s = Math.sqrt(N[i] / nMax) + Math.sqrt(N[i - 1] / nMax);
+    if (s > 0) Rmax = Math.min(Rmax, (dt - 0.9) / s);
+  }
+  Rmax = Math.min(Rmax, 4.4);
+  const dots = [];
+  DATA_B.forEach(([t, n]) => {
+    const cx = x(hm(t));
+    if (n > 0) {
+      const r = Rmax * Math.sqrt(n / nMax);
+      E(svg, 'circle', { cx, cy: busY, r, fill: C.ai });
+      dots.push({ t, n, r });
+    } else {
+      E(svg, 'circle', { cx, cy: busY, r: 1.25, fill: C.white, stroke: C.ai, 'stroke-width': SW });
+      dots.push({ t, n, r: 0 });
+    }
+  });
+  T(svg, x(9.5), yNote, 'わかさ姫：調査日の利用31人中29人が13時前の便', { size: 7, fill: C.ai });
+
+  // 目盛り（文字だけ）
+  [6, 9, 12, 15, 18].forEach(h => T(svg, x(h), yTick, h + '時', { size: 7, fill: C.gray, anchor: 'middle' }));
+
+  // 15時30分の境目：上の橙の帯と下の塗り分けを結ぶ点線（注記の行だけ途切れさせる）
+  line(svg, x(15.5), bandB + 1.8, x(15.5), yNote - 8.2, C.gray, { dash: '0.1 2.2' });
+  line(svg, x(15.5), yNote + 3.6, x(15.5), carY - carH / 2 - 1.8, C.gray, { dash: '0.1 2.2' });
+
+  // --- 下段「2050年」：1台の車（7時〜19時）
+  T(svg, 0, yLow, '2050年', { size: 8.5, weight: 'bold', fill: C.or });
+  const a = carH / 2, xs = x(7), xm = x(15.5), xe = x(19);
+  E(svg, 'path', { d: `M${r2(xm)},${r2(carY - a)} H${r2(xs)} A${a},${a} 0 0 0 ${r2(xs)},${r2(carY + a)} H${r2(xm)} Z`, fill: C.ai });
+  E(svg, 'path', { d: `M${r2(xm)},${r2(carY - a)} H${r2(xe)} A${a},${a} 0 0 1 ${r2(xe)},${r2(carY + a)} H${r2(xm)} Z`, fill: C.or });
+  const base = carY - a - 0.6;
+  const PS = 1.12;                                   // 人物の大きさ（大人）。子どもはその0.75倍
+  const ad = [x(8.7), x(8.7) + 12.4, x(8.7) + 24.8];
+  ad.forEach(cx => person(svg, cx, base, PS, C.ai));
+  T(svg, ad[0] - 4.9 * PS, yLow, '通院・買い物', { size: 7.5, fill: C.ai });
+  const kd = [x(16.2), x(16.2) + 10, x(16.2) + 20];
+  kd.forEach(cx => person(svg, cx, base, PS * 0.75, C.or));
+  T(svg, kd[0] - 4.9 * PS * 0.75, yLow, '部活・友達の家', { size: 7.5, fill: C.or });
+
+  // 引き出し線 → 吹き出し「乗った」「着いた」 → 保護者
+  const bubble = (bx, s) => {
+    const t = T(svg, 0, carY + 2.5, s, { size: 7 });
+    const w = tw(t) + 6, h = 11.2, y0 = carY - h / 2, rr = 2;
+    E(svg, 'path', { d: `M${r2(bx + rr)},${r2(y0)} H${r2(bx + w - rr)} Q${r2(bx + w)},${r2(y0)} ${r2(bx + w)},${r2(y0 + rr)} V${r2(y0 + h - rr)} Q${r2(bx + w)},${r2(y0 + h)} ${r2(bx + w - rr)},${r2(y0 + h)} H${r2(bx + 6.5)} L${r2(bx + 2.6)},${r2(y0 + h + 3)} L${r2(bx + 3.6)},${r2(y0 + h)} H${r2(bx + rr)} Q${r2(bx)},${r2(y0 + h)} ${r2(bx)},${r2(y0 + h - rr)} V${r2(y0 + rr)} Q${r2(bx)},${r2(y0)} ${r2(bx + rr)},${r2(y0)} Z`,
+                     fill: C.white, stroke: C.gray, 'stroke-width': SW, 'stroke-linejoin': 'round' });
+    svg.appendChild(t);
+    t.setAttribute('x', r2(bx + w / 2)); t.setAttribute('text-anchor', 'middle');
+    return w;
+  };
+  const pW = 4.9 * 1.12;
+  let bx = xe + a + 5.5;
+  line(svg, xe + a + 1, carY, bx, carY, C.gray);
+  const w1 = bubble(bx, '乗った');
+  const gap = Math.max(4, (W - pW - 1 - (bx + w1) - 4) / 2 - 18);
+  let bx2 = bx + w1 + 4.5;
+  line(svg, bx + w1, carY, bx2, carY, C.gray);
+  const w2 = bubble(bx2, '着いた');
+  const px = W - pW - 0.6;
+  line(svg, bx2 + w2, carY, px - pW - 2, carY, C.gray);
+  person(svg, px, carY + 5.6, PS, C.ink);
+
+  FIG.B = { K, X0, Rmax, nMax, dots, x6: x(6), x20: x(20), ticks: [6, 9, 12, 15, 18].map(x) };
+}
+
+/* ===== 図C 「行きたい」が消えるまで ===== */
+function drawFigC() {
+  const svg = document.getElementById('figC');
+  const W = widthPt(svg.parentNode);
+  const y1 = 14, y2 = 39.5, H = 46, fs = 7.5;
+  frame(svg, W, H);
+  person(svg, 4.6, y1 + 1.6, 0.75, C.or);
+  const t0 = T(svg, 11, y1, '行きたい', { size: fs, weight: 'bold', fill: C.or });
+  const w0 = tw(t0), cx0 = 11 + w0 / 2;
+  const words = ['親に頼む', '車が空いていれば', '行ける'];
+  const tmp = words.map(s => { const t = T(svg, 0, y1, s, { size: fs }); const w = tw(t); t.remove(); return w; });
+  const L = Math.min(22, (W - 11 - w0 - tmp.reduce((a, b) => a + b, 0) - 3 * 6) / 3);
+  let x = 11 + w0;
+  const starts = [];
+  words.forEach((s, i) => {
+    const ay = y1 - 2.7;
+    line(svg, x + 3, ay, x + 3 + L, ay, C.ink);
+    chevron(svg, x + 3 + L, ay, 0, C.ink);
+    x += 6 + L;
+    starts.push(x);
+    T(svg, x, y1, s, { size: fs, weight: i === 2 ? 'bold' : undefined });
+    x += tmp[i];
+  });
+  // 下へ分かれる破線：先へ行くほど薄く
+  const ay2 = y2 - 2.7, rr = 3;
+  E(svg, 'path', { d: `M${r2(cx0)},${r2(y1 + 3.6)} V${r2(ay2 - rr)} Q${r2(cx0)},${r2(ay2)} ${r2(cx0 + rr)},${r2(ay2)} H${r2(starts[0] - 3)}`,
+                   fill: 'none', stroke: C.gray, 'stroke-width': SW, 'stroke-dasharray': '2.2 1.8', 'stroke-linecap': 'round', 'stroke-linejoin': 'round' });
+  chevron(svg, starts[0] - 3, ay2, 0, C.gray);
+  const t1 = T(svg, starts[0], y2, '言い出さない', { size: fs, fill: C.gray });
+  const e1 = starts[0] + tw(t1);
+  line(svg, e1 + 3, ay2, starts[1] - 3, ay2, C.rule, { dash: '1.2 2.6' });
+  chevron(svg, starts[1] - 3, ay2, 0, C.rule);
+  T(svg, starts[1], y2, 'どの記録にも残らない', { size: fs, fill: C.gray });
+}
+
+/* ===== ①②③のアイコン（30×30 の座標で描き、10mm角に縮小。線幅は実寸1ptに補正） ===== */
+// 30×30 の設計座標で描き、書き出す前に pt 単位（10mm角）へ換算する。線幅は換算せず 1pt のまま。
+const ICON_PT = 28.35, ICON_K = ICON_PT / 30;
+function iconFrame(id) { const s = document.getElementById(id); frame(s, ICON_PT, ICON_PT); return s; }
+const st = (stroke = C.ink, o = {}) => Object.assign({ fill: 'none', stroke, 'stroke-width': SW, 'stroke-linecap': 'round', 'stroke-linejoin': 'round' }, o);
+function scalePath(d, k) {
+  // 絶対座標のコマンドだけを使う前提。円弧(A)は半径と終点だけを換算し、回転とフラグは残す
+  const tok = d.match(/[MLHVCQAZ]|-?\d*\.?\d+/g);
+  let cmd = '', idx = 0;
+  return tok.map(t => {
+    if (/[A-Z]/.test(t)) { cmd = t; idx = 0; return t; }
+    const i = idx++;
+    if (cmd === 'A' && [2, 3, 4].includes(i % 7)) return t;
+    return String(r2(parseFloat(t) * k));
+  }).join(' ').replace(/ ([A-Z]) /g, ' $1').replace(/^([A-Z]) /, '$1');
+}
+const GEOM = ['x', 'y', 'width', 'height', 'rx', 'r', 'cx', 'cy', 'x1', 'y1', 'x2', 'y2', 'font-size'];
+function EI(parent, tag, attrs) {
+  const a = Object.assign({}, attrs);
+  GEOM.forEach(g => { if (a[g] !== undefined) a[g] = r2(a[g] * ICON_K); });
+  if (a.d) a.d = scalePath(a.d, ICON_K);
+  return E(parent, tag, a);
+}
+function drawIcons() {
+  // ① 数える：記録用の紙、しずく形の印（橙の輪郭）、「正」と書きかけの正
+  let s = iconFrame('icon1');
+  EI(s, 'rect', st(C.ink, { x: 1.2, y: 5.2, width: 27.6, height: 20.4, rx: 1.2 }));
+  EI(s, 'path', st(C.or, { d: 'M8.4,21.2 C7.1,18.8 4.9,16.4 4.9,12.9 A3.5,3.5 0 0 1 11.9,12.9 C11.9,16.4 9.7,18.8 8.4,21.2 Z' }));
+  EI(s, 'text', { x: 13.8, y: 19.2, 'font-family': GOTHIC, 'font-size': 7.6, fill: C.ink }).textContent = '正';
+  EI(s, 'path', st(C.ink, { d: 'M22.6,12.8 H26.2 M24.4,12.8 V18.9 M24.4,15.8 H26.0' }));
+
+  // ② 試す：横から見た小型バス（窓3つ・車輪2つ）、右上に4時の時計（短針だけ橙）
+  s = iconFrame('icon2');
+  EI(s, 'rect', st(C.ink, { x: 1.2, y: 10.2, width: 24.2, height: 12.4, rx: 2.4 }));
+  [4.0, 10.2, 16.4].forEach(wx => EI(s, 'rect', st(C.ink, { x: wx, y: 12.8, width: 4.8, height: 4.4, rx: 0.6 })));
+  [7.2, 19.4].forEach(cx => EI(s, 'circle', st(C.ink, { cx, cy: 22.6, r: 2.6, fill: C.white })));
+  const ck = { x: 23.4, y: 7.0, r: 5.2 };
+  EI(s, 'circle', st(C.ink, { cx: ck.x, cy: ck.y, r: ck.r, fill: C.white }));
+  EI(s, 'line', st(C.ink, { x1: ck.x, y1: ck.y, x2: ck.x, y2: ck.y - 3.7 }));            // 長針：12
+  const ang = 4 * 30 * Math.PI / 180;                                                       // 短針：4
+  EI(s, 'line', st(C.or, { x1: ck.x, y1: ck.y, x2: r2(ck.x + 2.7 * Math.sin(ang)), y2: r2(ck.y - 2.7 * Math.cos(ang)) }));
+
+  // ③ 備える：太陽（円と光線6本）から細い線で、電池つきの電動アシスト自転車へ
+  s = iconFrame('icon3');
+  const sun = { x: 6.4, y: 6.4, r: 2.7 };
+  EI(s, 'circle', st(C.ink, { cx: sun.x, cy: sun.y, r: sun.r }));
+  for (let i = 0; i < 6; i++) {
+    const t = i * 60 * Math.PI / 180;
+    EI(s, 'line', st(C.ink, { x1: r2(sun.x + 4.2 * Math.cos(t)), y1: r2(sun.y + 4.2 * Math.sin(t)), x2: r2(sun.x + 5.9 * Math.cos(t)), y2: r2(sun.y + 5.9 * Math.sin(t)) }));
+  }
+  const bat = { x: 14.6, y: 12.5, w: 4.6, h: 2.9 };
+  const bx = bat.x + bat.w / 2, dx = bx - sun.x, dy = bat.y - sun.y, dl = Math.hypot(dx, dy);
+  EI(s, 'line', st(C.ink, { x1: r2(sun.x + dx / dl * 4.4), y1: r2(sun.y + dy / dl * 4.4), x2: r2(bx), y2: r2(bat.y) }));
+  [7.4, 22.8].forEach(cx => EI(s, 'circle', st(C.ink, { cx, cy: 23.3, r: 4.5 })));
+  EI(s, 'path', st(C.ink, { d: 'M7.4,23.3 L12.0,15.4 L14.2,23.3 Z M12.0,15.4 H20.8 M14.2,23.3 L20.8,15.4 L22.8,23.3 M10.2,13.5 H13.2 M12.0,15.4 L11.8,13.5 M20.8,15.4 L20.3,12.6 H22.7' }));
+  EI(s, 'rect', st(C.ink, { x: bat.x, y: bat.y, width: bat.w, height: bat.h, rx: 0.4, fill: C.white }));
+  EI(s, 'line', st(C.ink, { x1: bat.x + bat.w + 0.9, y1: bat.y + 1.0, x2: bat.x + bat.w + 0.9, y2: bat.y + bat.h - 1.0 }));
+}
+
+/* ===== 図D 縦の時間軸（節目の位置を実測して描く） ===== */
+function drawFigD() {
+  const tl = document.getElementById('tl'), svg = document.getElementById('figD');
+  const box = tl.getBoundingClientRect();
+  const Wd = parseFloat(getComputedStyle(tl).paddingLeft) / PX_PER_PT;
+  const H = box.height / PX_PER_PT;
+  frame(svg, Wd, H);
+  const ax = 1.9;
+  const ms = [...tl.querySelectorAll('.ms')].map(m => {
+    const b = m.querySelector('.bl').getBoundingClientRect();
+    const fs = parseFloat(getComputedStyle(m).fontSize) / PX_PER_PT;
+    return { y: (b.top - box.top) / PX_PER_PT - 0.36 * fs, gray: m.classList.contains('gray'), end: m.classList.contains('end') };
+  });
+  line(svg, ax, ms[0].y, ax, ms[ms.length - 1].y, C.ink);
+  ms.forEach(m => E(svg, 'circle', { cx: ax, cy: m.y, r: m.end ? 2.7 : 1.7, fill: m.end ? C.or : (m.gray ? C.gray : C.ink) }));
+  FIG.D = ms;
+}
+
+/* ===== タイトルの字詰め =====
+   Google Fonts 版の Shippori Mincho には palt が入っていないため、
+   同フォント（Bold）のグリフの左右の余白（em）から詰め量を計算して、palt 相当に詰める。 */
+const TITLE_SB = { 'に': [0.154, 0.155], 'ま': [0.215, 0.256], 'な': [0.139, 0.147], 'く': [0.307, 0.39],
+  'て': [0.093, 0.14], 'も': [0.255, 0.232], '島': [0.097, 0.047], 'じ': [0.179, 0.16], 'ゅ': [0.181, 0.187],
+  'う': [0.26, 0.26], 'へ': [0.054, 0.065], '親': [0.039, 0.038], '頼': [0.038, 0.043] };
+function kernTitle() {
+  const h1 = document.querySelector('.title');
+  const trim = sb => Math.max(0, sb - 0.08) * 0.8;
+  const walker = document.createTreeWalker(h1, NodeFilter.SHOW_TEXT);
+  const nodes = []; while (walker.nextNode()) nodes.push(walker.currentNode);
+  nodes.forEach(n => {
+    const frag = document.createDocumentFragment();
+    [...n.nodeValue].forEach(ch => {
+      const sp = document.createElement('span'); sp.className = 'k'; sp.textContent = ch;
+      let l = 0, r = 0;
+      if (ch === '、') r = 0.5;                       // 句読点は半角幅に
+      else if (TITLE_SB[ch]) { l = trim(TITLE_SB[ch][0]); r = trim(TITLE_SB[ch][1]); }
+      sp.style.marginLeft = (-l).toFixed(3) + 'em'; sp.style.marginRight = (-r).toFixed(3) + 'em';
+      frag.appendChild(sp);
+    });
+    n.parentNode.replaceChild(frag, n);
+  });
+}
+
+/* ===== 数字と単位を行またぎで分けない ===== */
+function wrapNumbers() {
+  // 数字＋単位と、短いカギ括弧の語（「乗った」など）を1つのまとまりにする
+  const re = /(?:約)?\d[\d,.]*(?:〜\d+)?(?:％|万円|か月|年度|年間|年\d+月|年代|年|歳以上|歳|時前|時台|時|人|日|割)|「[^「」]{1,6}」/g;
+  const roots = document.querySelectorAll('p, h1, h2, h3, .ms, footer');
+  roots.forEach(root => {
+    const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+    const nodes = [];
+    while (walker.nextNode()) nodes.push(walker.currentNode);
+    nodes.forEach(n => {
+      if (n.parentNode.closest('svg') || n.parentNode.classList.contains('nw')) return;
+      const s = n.nodeValue; re.lastIndex = 0;
+      if (!re.test(s)) return;
+      re.lastIndex = 0;
+      const frag = document.createDocumentFragment();
+      let last = 0, m;
+      while ((m = re.exec(s))) {
+        if (m.index > last) frag.appendChild(document.createTextNode(s.slice(last, m.index)));
+        const sp = document.createElement('span'); sp.className = 'nw'; sp.textContent = m[0];
+        frag.appendChild(sp); last = m.index + m[0].length;
+      }
+      if (last < s.length) frag.appendChild(document.createTextNode(s.slice(last)));
+      n.parentNode.replaceChild(frag, n);
+    });
+  });
+}
+
+(async function main() {
+  kernTitle();
+  wrapNumbers();
+  await document.fonts.ready;
+  const sample = document.body.innerText + '送る側と、送られる側（西之表市）15〜64歳100人あたりの、15歳未満と65歳以上国立社会保障・人口問題研究所2018年推計同じ車を、時間で分け合ういま高齢者の通院・買い物放課後・休日（子どもが動きたい時間）わかさ姫：調査日の利用31人中29人が13時前の便6時9時12時15時18時2050年通院・買い物部活・友達の家乗った着いた行きたい親に頼む車が空いていれば行ける言い出さないどの記録にも残らない正0123456789,';
+  await Promise.all(['normal', 'bold'].flatMap(w => [
+    document.fonts.load(`${w} 10px "Zen Kaku Gothic New"`, sample),
+    document.fonts.load(`${w} 10px "Shippori Mincho"`, sample),
+  ]));
+  drawFigA();
+  drawFigB();
+  drawFigC();
+  drawIcons();
+  await document.fonts.ready;
+  await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+  drawFigD();
+  window.__FIG = FIG;
+  window.__ready = true;
+})();
+</script>
+</body>
+</html>
