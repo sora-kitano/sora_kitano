@@ -110,6 +110,18 @@ def write_stl(m: Manifold, path: Path, name: str) -> None:
         f.write(rec.tobytes())
 
 
+def is_watertight_stl(m: Manifold) -> bool:
+    """STLに書き出したとき（座標が同じ頂点は1つにまとまる）すべての辺がちょうど2面で共有されるか。"""
+    mesh = m.to_mesh()
+    v = np.asarray(mesh.vert_properties, dtype=np.float32)[:, :3]
+    t = np.asarray(mesh.tri_verts, dtype=np.int64)
+    _, inv = np.unique(v, axis=0, return_inverse=True)
+    t = inv.reshape(-1)[t]
+    e = np.sort(np.concatenate([t[:, [0, 1]], t[:, [1, 2]], t[:, [2, 0]]]), axis=1)
+    _, counts = np.unique(e, axis=0, return_counts=True)
+    return bool(np.all(counts == 2))
+
+
 def drop_to_bed(m: Manifold) -> Manifold:
     (x0, y0, z0, x1, y1, z1) = m.bounding_box()
     return m.translate((-(x0 + x1) / 2, -(y0 + y1) / 2, -z0))
@@ -163,17 +175,17 @@ STOPPER_FRONT = dict(
     rib_w=1.2, rib_ys=(-3.8, 0.0, 3.8),
     seam_chamfer=0.3,        # 割り面の縁の面取り（ケーブルを挟み込んで傷めない）
     groove_w=3.8, groove_d=1.3, groove_ys=(0.0,),   # 結束バンド溝（2.5mm幅のバンド用）
-    pin_r=1.2, pin_h=1.8, hole_r=1.45, hole_h=2.4, pin_x=5.6, pin_y=3.3,
+    pin_r=1.2, pin_h=1.8, hole_r=1.45, hole_h=2.4, pin_x=5.6, pin_y=3.6,
     chamfer=0.7,             # ケーブル出入口の面取り
 )
 
 STOPPER_REAR = dict(
-    L=26.0, W=20.0, H=7.5,   # 組み立て後 26 x 20 x 15 mm
+    L=26.0, W=20.0, H=7.625, # 組み立て後 26 x 20 x 15.25 mm（7.5だと0.2mm積層の層の真ん中に合わせ目が来て高さが±0.1mm揺れる）
     edge=2.5,
     lip_len=3.0,             # 両端3mmはチューブなしの穴（d+0.3）。チューブの抜け止め
     lip_clear=0.15,
     liner_t=1.0,             # シリコンチューブの肉厚
-    relief_clear=0.4,        # リブ間の逃げ（潰れたゴムの行き場。充填率を85%以下に保つ）
+    relief_clear=0.5,        # リブ間の逃げ（潰れたゴムの行き場。S−0.2でも充填率を85%前後に保つ）
     squeeze=0.25,            # 合わせ目が閉じたときのチューブの潰れ量（片側、肉厚の25%）
     rib_w=1.6, rib_ys=(-7.5, -2.5, 2.5, 7.5),
     seam_chamfer=0.3,
@@ -234,7 +246,9 @@ def stopper_half(d: float, p=STOPPER_FRONT) -> Manifold:
 
     # 割り面の縁の面取り（穴の縁とリブ先端の縁）
     sc = p["seam_chamfer"]
-    for r, y0, y1 in ((r_rel, -yp, yp), (r_rib, -yp, yp), (r_lip, -L / 2 - 1, L / 2 + 1)):
+    # ポケット側は端面からわずかに離す（端面と面取りの稜線が重なるとSTLに非多様体の辺ができる）
+    for r, y0, y1 in ((r_rel, -yp + 0.02, yp - 0.02), (r_rib, -yp + 0.02, yp - 0.02),
+                      (r_lip, -L / 2 - 1, L / 2 + 1)):
         tri = CrossSection([np.array([[-r - sc, H + 0.01], [-r, H - sc], [r, H - sc], [r + sc, H + 0.01]])])
         body -= extrude_xz(tri, y0, y1)
 
@@ -263,18 +277,23 @@ def stopper_rear_half(d: float, liner: bool = True) -> Manifold:
 HOLDER = dict(
     D=70.0,       # 上下フックの中心間距離（1周 ≒ 2D + 2π(rh + d/2)）
     rh=7.5,       # フック外半径（ケーブルの曲げ半径 ≒ rh + d/2 ≒ 9.5mm）
-    hh=34.0,      # フック高さ（プレート上面から）。d=4.4〜5.0で6周＝約1.2m
+    hh=34.0,      # フック高さ（プレート上面から）
     lip=1.8,      # フック先端の返しの張り出し
     tp=3.0,       # プレート厚
     plate_r=5.0,
     anchor_len=10.0,
-    anchor_gap=2.0,
+    anchor_gap=2.0,    # 実際の間隔は holder_anchor_gap(d)（ケーブルが最下段を通れるよう d+0.6 以上）
     anchor_wall=1.2,
     anchor_open=0.84,  # 固定クリップの開口 = d × これ（壁の曲げひずみ約2.5%）
     margin=1.5,
     slot=(4.4, 2.2),   # 結束バンド/面ファスナー用スリット
     slot_y=13.0,
 )
+
+
+def holder_anchor_gap(d: float, p=HOLDER) -> float:
+    """フックと固定クリップの間隔。狭いと最下段の輪がクリップに当たって1周分入らなくなる。"""
+    return max(p["anchor_gap"], d + 0.6)
 
 
 def _dshape(yc: float, outward: int, R: float, flat: float = 3.0) -> CrossSection:
@@ -289,7 +308,7 @@ def _dshape(yc: float, outward: int, R: float, flat: float = 3.0) -> CrossSectio
 
 def slack_holder(d: float, p=HOLDER) -> Manifold:
     D, rh, hh, tp = p["D"], p["rh"], p["hh"], p["tp"]
-    la, gap, margin = p["anchor_len"], p["anchor_gap"], p["margin"]
+    la, gap, margin = p["anchor_len"], holder_anchor_gap(d, p), p["margin"]
     pw = 2 * rh + 2.0
     half = D / 2 + rh + gap + la + margin
 
@@ -339,7 +358,7 @@ JIG = dict(
     c_edge=20.0,      # 板の端 → ケーブル中心（スロット奥の半円の中心）
     lead=2.0,         # スロット入口の45°ガイド
     ch=0.8,           # スロット上下の縁の45°面取り（ケーブルを角に当てない）
-    desk_line=40.0,   # 机の縁に合わせる線（端から40mm → ケーブルは机から20mm外に出る）
+    desk_line=55.0,   # 机の縁に合わせる線（端から55mm → ケーブルは机から35mm外に出て、重りが机に触れにくい）
     hole_d=4.5, hole_x=15.0,  # M4ボルト/木ねじ用の穴
     engrave=0.6,
 )
@@ -395,7 +414,7 @@ def tube_cut_guide(od: float, label: str, p=TUBE_GUIDE) -> Manifold:
     Hh = p["floor"] + od
     body = box(0, p["L"], -W / 2, W / 2, 0, Hh)
     body -= box(p["stop"], p["L"] + 1, -cw / 2, cw / 2, p["floor"], Hh + 1)
-    xs = p["stop"] + p["cut_len"]
+    xs = p["stop"] + p["cut_len"] - p["slot_w"] / 2   # 刃の厚みを見込んで 18.6〜19.0mm に切れるように
     body -= box(xs, xs + p["slot_w"], -W / 2 - 1, W / 2 + 1, p["bridge"], Hh + 1)
     # 側面にチューブサイズを彫り込む（XY平面の文字を立てて -Y 側の面へ）
     lab = text2(label, 3.5, 0, 0).extrude(0.6).rotate((90, 0, 0))
@@ -422,6 +441,7 @@ def main() -> None:
     for rel, m in parts.items():
         assert m.status().name == "NoError", (rel, m.status())
         assert len(m.decompose()) == 1, rel
+        assert is_watertight_stl(m), f"{rel}: STLが閉じていない"
         write_stl(m, STL_DIR / rel, rel)
         (x0, y0, z0, x1, y1, z1) = m.bounding_box()
         print(f"{rel:46s} {x1 - x0:6.1f} x {y1 - y0:6.1f} x {z1 - z0:5.1f} mm"

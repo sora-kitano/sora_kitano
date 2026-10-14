@@ -243,7 +243,7 @@ def holder_cable_path(d, loops=4):
     p = g.HOLDER
     D, rh, tp = p["D"], p["rh"], p["tp"]
     rc = rh + d / 2
-    half = D / 2 + rh + p["anchor_gap"] + p["anchor_len"] + p["margin"]
+    half = D / 2 + rh + g.holder_anchor_gap(d) + p["anchor_len"] + p["margin"]
     z0 = tp + d / 2
     pts = [[0, -half - 30, z0], [0, -D / 2 - rc - 1, z0]]
     z = z0
@@ -282,7 +282,7 @@ def holder_usage(d=4.0):
     D, rh, tp = p["D"], p["rh"], p["tp"]
     rc = rh + d / 2
     fig, ax = plt.subplots(figsize=(5.2, 8.5), dpi=110)
-    half = D / 2 + rh + p["anchor_gap"] + p["anchor_len"] + p["margin"]
+    half = D / 2 + rh + g.holder_anchor_gap(d) + p["anchor_len"] + p["margin"]
     pw = 2 * rh + 2
     ax.add_patch(matplotlib.patches.FancyBboxPatch(
         (-pw / 2, -half), pw, 2 * half, boxstyle="round,pad=0,rounding_size=5",
@@ -291,7 +291,7 @@ def holder_usage(d=4.0):
         th = np.linspace(0, np.pi, 50)
         xs, ys = rh * np.cos(th), s * (D / 2 + rh * np.sin(th))
         ax.fill(np.r_[xs, [-rh, rh]], np.r_[ys, [s * (D / 2 - 3)] * 2], fc="#c9c9c3", ec="#777")
-        ya = s * (D / 2 + rh + p["anchor_gap"] + p["anchor_len"] / 2)
+        ya = s * (D / 2 + rh + g.holder_anchor_gap(d) + p["anchor_len"] / 2)
         ax.add_patch(matplotlib.patches.Rectangle(
             (-(d / 2 + 1.8), ya - 5), d + 3.6, 10, fc="#c9c9c3", ec="#777"))
 
@@ -409,41 +409,48 @@ def slip_test_diagram():
     ax.plot([x, x, 46, 30, 12], [36, 71, 77, 78, 62.6], **cable)                    # 上はたるませて机へ
     ax.add_patch(P.Rectangle((10, 62.4), 4, 1.2, fc="#f2d36b", ec="#a88a2a"))      # テープ止め
     ax.add_patch(P.Rectangle((x - 2.2, 62.4), 4.4, 5.6, fc="#2a6fdb", ec="#1b4ea0"))   # 後ろ用ストッパー
-    ax.add_patch(P.Rectangle((x - 1.6, 59.0), 3.2, 2.0, fc="#f2d36b", ec="#a88a2a"))   # 目印テープ
-    # 500mLボトルにケーブルを3周
-    ax.add_patch(P.FancyBboxPatch((x - 3.5, 22), 7, 13, boxstyle="round,pad=0,rounding_size=1.5",
+    ax.plot([x - 1.3, x + 1.3], [70.5, 70.5], color="#c0392b", lw=2.2)                  # ペンの印
+    ax.annotate("", (x + 3.2, 68.0), (x + 3.2, 70.5), arrowprops=dict(arrowstyle="<->", lw=0.8))
+    # 500mLボトルを横にしてケーブルを3周巻き、巻き終わりをテープで留める
+    ax.add_patch(P.FancyBboxPatch((x - 13, 28), 22, 7.5, boxstyle="round,pad=0,rounding_size=2",
                                   fc="#dfeffa", ec="#6a8fb0"))
+    ax.add_patch(P.Rectangle((x + 9, 30), 2.5, 3.5, fc="#cfe3f3", ec="#6a8fb0"))         # 首
     for k in range(3):
-        y = 31 - k * 3
-        ax.plot([x - 3.8, x + 3.8], [y + 1.2, y - 0.4], **cable)
-    ax.plot([x, x], [22, 18], color="#444", lw=1.2)                                 # 首の紐
+        xx = x - 1.5 + k * 1.6
+        ax.plot([xx, xx + 1.2], [35.5, 28], **cable)
+    ax.add_patch(P.Rectangle((x + 3.5, 27.6), 3.0, 8.3, fc="#f2d36b", ec="#a88a2a", alpha=0.9))  # テープ
+    # 袋は首と底の2点から吊って、ボトルを水平に保つ
+    ax.plot([x - 12, x - 2], [28, 18], color="#444", lw=1.2)
+    ax.plot([x + 11, x + 2], [31, 18], color="#444", lw=1.2)
     ax.add_patch(P.Polygon([[x - 7, 17.5], [x + 7, 17.5], [x + 6, 4], [x - 6, 4]], fc="#f3f3f3", ec="#888"))
     ax.text(x, 10.5, "水入り\nペットボトル", ha="center", va="center", fontsize=9)
     ax.add_patch(P.Rectangle((x - 11, -3), 22, 6, fc="#efe6d2", ec="#a08a60"))     # 受け箱
     kw = dict(fontsize=9.5, va="center", arrowprops=dict(arrowstyle="->", lw=0.8))
     ax.annotate("④治具の板をC型クランプで机に固定\n（机の縁の線に合わせる）", (34, 66), (2, 86), **kw)
-    ax.annotate("③後ろ用ストッパーを\n板の上面に当てる", (x + 2.2, 65), (62, 72), **kw)
-    ax.annotate("目印のマスキングテープ\n（板とのすき間を紙片で測る）", (x + 1.6, 60), (62, 56), **kw)
-    ax.annotate("500mLボトルにケーブルを3周巻く\n（重さはここで支える）", (x + 3.8, 29), (62, 34), **kw)
-    ax.annotate("袋に水のボトル\n30N ≒ 3.1kg / 40N ≒ 4.1kg", (x + 6.5, 12), (66, 15), **kw)
+    ax.annotate("③後ろ用ストッパーを\n板の上面に当てる", (x + 2.2, 65), (64, 62), **kw)
+    ax.annotate("ケーブルにペンで印。ストッパー上面から\n印までをノギスで測る（増えた分がずれ）", (x + 3.4, 69.3), (60, 80), **kw)
+    ax.annotate("500mLボトルを横にして3周巻き、\n巻き終わりをテープで留める", (x + 6.5, 33), (66, 40), **kw)
+    ax.annotate("袋は首と底の2本のひもで吊る\n全部で 30N ≒ 3.1kg（はかりで確認）", (x + 6.5, 12), (66, 20), **kw)
     ax.annotate("タオルを敷いた箱\n（落ちても10cm以内）", (x + 11, 0), (67, 2), **kw)
     ax.annotate("USB-C側は机にテープで留める", (12, 63.6), (2, 74), **kw)
+    ax.text(2, 46, "重りは机の脚や箱に\n触れずにぶら下げる", fontsize=9.5, color="#b03030")
     ax.set_title("引張試験のやり方（横から見た図）", fontsize=13)
 
     bx.axis("off")
     rows = [
-        ("準備", "MagSafeケーブル1本をアダプタから外して机へ。\nストッパーはゲージの数字 S と S−0.2 の2サイズ×3組ずつ"),
-        ("試験A\n30Nを60秒", "約3.1kgをそっと吊るして60秒。\n目印テープのすき間 0.5mm以内なら合格"),
-        ("試験B\n上げ下ろし25回", "同じ重さを1秒ずつ持ち上げ／下ろすを25回。\n合計のずれ 1mm以内なら合格"),
-        ("試験C\n余裕の確認", "吊りはかりでゆっくり引く（40Nで止める）。\n40Nまで滑らない、または滑り始めが36N以上"),
-        ("試験D\n1週間後", "別の3組をケーブルに付けたまま保管庫の上段に\n1週間置く。締め直さずに A〜C をもう一度"),
-        ("判定", "全部の組が合格した一番大きいサイズを量産。\n1組でも不合格なら、そのサイズは使わない"),
+        ("準備", "ケーブル1本をアダプタから外して机へ。ストッパーは\nSとS−0.2を各3組、取り付け方の手順どおりに付ける"),
+        ("0点", "重りを吊るして10秒後の長さを0点にする\n（直後の0.2〜0.4mmはゴムのたわみなので数えない）"),
+        ("試験A\n30Nを60秒", "ボトル・袋・水の合計 約3.1kg。\n0点から60秒後までの増えが 0.5mm以内"),
+        ("試験B\n上げ下ろし25回", "同じ重りを1秒ずつ持ち上げ／下ろすを25回。\n0点からの増えの合計が 1mm以内"),
+        ("試験C\n余裕の確認", "はかりをケーブルとボトルの間に入れてゆっくり引く。\n40Nまで滑らない、または滑り始めが36N以上"),
+        ("試験D\n1週間後", "別にSとS−0.2を各3組、ケーブルに付けたまま保管庫の\n上段に1週間。締め直さずに A〜C をもう一度"),
+        ("判定", "A〜Dで全組が合格したサイズのうち大きい方を使う。\n1組でも不合格のサイズは使わない"),
     ]
     y = 0.95
     for head, body in rows:
         bx.text(0.0, y, head, fontsize=11, fontweight="bold", va="top", color="#1b4ea0")
         bx.text(0.25, y, body, fontsize=10.5, va="top")
-        y -= 0.155
+        y -= 0.133
     bx.text(0.0, 0.03, "40Nより強く引かない（ケーブル保護のため）。試験後は充電できるか必ず確認する。",
             fontsize=9.5, color="#b03030", va="bottom")
     bx.set_title("合格ライン", fontsize=13)
