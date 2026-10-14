@@ -160,21 +160,83 @@ CABLE = (0.62, 0.62, 0.64)
 ACCENT = (0.25, 0.48, 0.86)
 
 
-def stopper_assembly(d, gap=5.0):
-    H, W, L = g.STOPPER["H"], g.STOPPER["W"], g.STOPPER["L"]
-    a = g.stopper_half(d)
-    b = a.rotate((0, 180, 0)).translate((0, 0, 2 * H + gap))
-    cable = g.cyl_y(d / 2, -26, 26, z=H + gap / 2)
+TUBE = (0.55, 0.80, 0.78)
+
+
+def stopper_pair(d, prm, half_fn, gap=0.0):
+    """半割2個（下は印刷向きのまま、上は裏返し）とケーブル。"""
+    H = prm["H"]
+    a = half_fn(d)
+    b = a.translate((0, 0, -H)).rotate((0, 180, 0)).translate((0, 0, H + gap))
+    cable = g.cyl_y(d / 2, -prm["L"] / 2 - 16, prm["L"] / 2 + 16, z=H + gap / 2)
     return a, b, cable
 
 
-def zip_tie(d):
-    H, W = g.STOPPER["H"], g.STOPPER["W"]
-    gd, gw = g.STOPPER["groove_d"], 2.5
-    inner = g.box(-W / 2 + gd, W / 2 - gd, -gw / 2, gw / 2, gd, 2 * H - gd)
-    outer = g.box(-W / 2 + gd - 1.0, W / 2 - gd + 1.0, -gw / 2, gw / 2, gd - 1.0, 2 * H - gd + 1.0)
-    head = g.box(W / 2 - gd + 0.8, W / 2 - gd + 5.5, -2.5, 2.5, H - 2.5, H + 2.5)
-    return outer - inner + head
+def zip_ties(prm, tie_w):
+    """溝に入った結束バンド（組み立て状態、割り面 z=H を中心に上下対称）。"""
+    H, W, gd, e = prm["H"], prm["W"], prm["groove_d"], prm["edge"]
+    full = g.CrossSection([np.array([
+        [-W / 2 + e, 0.0], [W / 2 - e, 0.0], [W / 2, e], [W / 2, 2 * H - e], [W / 2 - e, 2 * H],
+        [-W / 2 + e, 2 * H], [-W / 2, 2 * H - e], [-W / 2, e]])])
+    inner = full.offset(-gd, g.JoinType.Miter, 4.0)
+    outer = full.offset(-gd + 1.1, g.JoinType.Miter, 4.0)
+    out = g.Manifold()
+    for y in prm["groove_ys"]:
+        ring = g.extrude_xz(outer - inner, y - tie_w / 2, y + tie_w / 2)
+        head = g.box(W / 2 - gd + 0.6, W / 2 - gd + 5.0, y - 2.6, y + 2.6, H + 1.0, H + 6.0)
+        out += ring + head
+    return out
+
+
+def liner_tube(d, prm):
+    """縦に切れ目を入れたシリコンチューブ（ケーブルに巻いた状態）。"""
+    t, yp = prm["liner_t"], prm["L"] / 2 - prm["lip_len"] - 0.5
+    z = prm["H"]
+    m = g.cyl_y(d / 2 + t, -yp, yp, z=z) - g.cyl_y(d / 2, -yp - 1, yp + 1, z=z)
+    return m - g.box(-0.6, 0.6, -yp - 1, yp + 1, z, z + d)   # 上側に切れ目
+
+
+def parts_overview(d=4.0):
+    fig, axes = plt.subplots(2, 4, figsize=(19, 9.4), dpi=100)
+    F, R = g.STOPPER_FRONT, g.STOPPER_REAR
+    fa, fb, fc = stopper_pair(d, F, g.stopper_front_half)
+    ra, rb, rc_ = stopper_pair(d, R, g.stopper_rear_half, gap=12.0)
+    tube_m = liner_tube(d, R).translate((0, 0, 6.0))
+    shots = [
+        ("① ケーブル径ゲージ（最初に1枚）", [(g.drop_to_bed(g.cable_gauge()), PART)], 62, -90),
+        ("② 前用ストッパー半割（印刷向き）", [(g.stopper_front_half(d), PART)], 38, -58),
+        ("②を2個＋結束バンド(2.5mm)1本で1組", [(fa, PART), (fb, PART), (fc, CABLE), (zip_ties(F, 2.5), ACCENT)], 18, -30),
+        ("③ 後ろ用ストッパー半割（印刷向き）", [(g.stopper_rear_half(d), PART)], 40, -58),
+        ("③の中にシリコンチューブを巻いたケーブル\n＋結束バンド(3.6mm)2本で合わせ目が閉じるまで締める",
+         [(ra, PART), (rb, PART), (rc_, CABLE), (tube_m, TUBE)], 14, -32),
+        ("④ 引張試験の治具（試作の確認用）", [(g.drop_to_bed(g.slip_test_jig()), PART)], 55, -70),
+        ("⑤ チューブを19mmに切るガイド", [(g.drop_to_bed(g.tube_cut_guide(6.0, "4x6")), PART)], 35, -55),
+        ("⑥ 余長ホルダー（背面）", [(g.slack_holder(d), PART)], 32, -38),
+    ]
+    for ax, (title, objs, el, az) in zip(axes.ravel(), shots):
+        ax.imshow(render(objs, el, az, size=(560, 420)))
+        ax.set_title(title, fontsize=12)
+        ax.axis("off")
+    fig.tight_layout()
+    fig.savefig(IMG / "parts_overview.png")
+    plt.close(fig)
+
+
+def rear_stopper_closeup(d=4.4):
+    """後ろ用ストッパーの断面（ケーブル軸を含む面で切った図）。"""
+    R = g.STOPPER_REAR
+    a, b, cable = stopper_pair(d, R, g.stopper_rear_half)
+    tube_m = liner_tube(d, R)
+    cut = g.box(-30, 0, -30, 30, -5, 40)            # 手前半分を切り取る
+    objs = [(a - cut, PART), (b - cut, PART), (cable - cut, CABLE), (tube_m - cut, TUBE),
+            (zip_ties(R, 3.6) - cut, ACCENT)]
+    fig, ax = plt.subplots(figsize=(8.5, 5.6), dpi=110)
+    ax.imshow(render(objs, 14, -150, size=(760, 500)))
+    ax.set_title("後ろ用ストッパーの断面：リブがチューブを0.25mmだけ潰した所で合わせ目が当たって止まる", fontsize=11)
+    ax.axis("off")
+    fig.tight_layout()
+    fig.savefig(IMG / "rear_stopper_section.png")
+    plt.close(fig)
 
 
 def holder_cable_path(d, loops=4):
@@ -200,27 +262,6 @@ def holder_cable_path(d, loops=4):
     pts += list(arc(D / 2, np.pi, np.pi / 2, z + 0.3, z + 0.6, 12))
     pts += [[0, D / 2 + rc + 4, z0 + 1.5], [0, half + 30, z0]]
     return np.asarray(pts, float)
-
-
-def parts_overview(d=4.0):
-    fig, axes = plt.subplots(2, 2, figsize=(12, 9.2), dpi=110)
-    shots = [
-        ("① ケーブル径ゲージ（最初に1枚だけ）", [(g.drop_to_bed(g.cable_gauge()), PART)], 62, -90),
-        (f"② ストッパー半割（印刷する向き / d={d}）", [(g.stopper_half(d), PART)], 38, -58),
-        ("②を2個でケーブルを挟み、溝を結束バンドで締める",
-         [(m, c) for m, c in zip(stopper_assembly(d), (PART, PART, CABLE))]
-         + [(zip_tie(d).translate((0, 0, 0)), ACCENT)], 16, -32),
-        (f"③ 余長ホルダー（d={d}）", [(g.slack_holder(d), PART)], 32, -38),
-    ]
-    a, b, cable = stopper_assembly(d, gap=0.0)
-    shots[2] = (shots[2][0], [(a, PART), (b, PART), (cable, CABLE), (zip_tie(d), ACCENT)], 18, -30)
-    for ax, (title, objs, el, az) in zip(axes.ravel(), shots):
-        ax.imshow(render(objs, el, az, size=(620, 440)))
-        ax.set_title(title, fontsize=13)
-        ax.axis("off")
-    fig.tight_layout()
-    fig.savefig(IMG / "parts_overview.png")
-    plt.close(fig)
 
 
 def holder_3d(d=4.0):
@@ -331,15 +372,15 @@ def install_diagram():
         else:
             ax.plot([88, 88, 87, 80, 74, 72, 70, 40, 10, 6, 5, 7, 8.5],
                     [37, 44, 66, 69, 70, 70, 69, 68, 68, 66, 60, 55, 52], **cable)
-            # ストッパー（クリップの前後）
-            for x in (4.2, 11.2):
-                ax.add_patch(matplotlib.patches.Rectangle((x, 66.3), 2.6, 4.2, fc="#2a6fdb", ec="#1b4ea0"))
+            # ストッパー（クリップの前＝小型、後ろ＝チューブ入りの長いもの）
+            ax.add_patch(matplotlib.patches.Rectangle((4.2, 66.3), 2.6, 4.2, fc="#2a6fdb", ec="#1b4ea0"))
+            ax.add_patch(matplotlib.patches.Rectangle((10.2, 66.0), 5.6, 4.6, fc="#2a6fdb", ec="#1b4ea0"))
             # 余長ホルダー
             ax.add_patch(matplotlib.patches.FancyBboxPatch((85.5, 44), 5, 18,
                          boxstyle="round,pad=0,rounding_size=1.5", fc="#2a6fdb", ec="#1b4ea0", alpha=0.85))
-            ax.annotate("②ストッパー×2\n既存クリップを前後から挟む", (8.5, 70.5), (14, 74.5),
+            ax.annotate("②前用 ＋ ③後ろ用ストッパー\n既存クリップを前後から挟む", (9.0, 70.8), (16, 74.5),
                         arrowprops=dict(arrowstyle="->", lw=0.9), fontsize=10, color="#1b4ea0")
-            ax.annotate("③余長ホルダー\n余りはここに巻き取る", (90.5, 55), (71, 74.5),
+            ax.annotate("⑥余長ホルダー\n余りはここに巻き取る", (90.5, 55), (71, 74.5),
                         arrowprops=dict(arrowstyle="->", lw=0.9), fontsize=10, color="#1b4ea0")
             ax.text(36, 14, "前面の垂れ長さが全スロットで一定に\n取り出してもケーブルは引き出されない",
                     ha="center", fontsize=10.5, color="#1b4ea0")
@@ -349,10 +390,74 @@ def install_diagram():
     plt.close(fig)
 
 
+def slip_test_diagram():
+    """机の上でやる引張試験の模式図。"""
+    fig, (ax, bx) = plt.subplots(1, 2, figsize=(14, 7.2), dpi=110, gridspec_kw=dict(width_ratios=[1.15, 1]))
+    P = matplotlib.patches
+    ax.set_xlim(0, 100)
+    ax.set_ylim(-4, 92)
+    ax.set_aspect("equal")
+    ax.axis("off")
+    ax.add_patch(P.Rectangle((0, 56), 50, 5, fc="#d9c7a7", ec="#8a7350"))          # 机
+    ax.add_patch(P.Rectangle((18, 61), 39, 1.4, fc="#e6e6e1", ec="#777"))         # 治具の板
+    # C型クランプ
+    ax.plot([30, 30, 37, 37, 34, 34], [64.5, 66, 66, 50, 50, 56], color="#555", lw=3)
+    ax.plot([30, 33], [64.5, 64.5], color="#555", lw=3)
+    ax.plot([31.5, 31.5], [62.4, 64.5], color="#555", lw=2)
+    cable = dict(color="#7d7d7d", lw=2.6, solid_capstyle="round")
+    x = 53
+    ax.plot([x, x, 46, 30, 12], [36, 71, 77, 78, 62.6], **cable)                    # 上はたるませて机へ
+    ax.add_patch(P.Rectangle((10, 62.4), 4, 1.2, fc="#f2d36b", ec="#a88a2a"))      # テープ止め
+    ax.add_patch(P.Rectangle((x - 2.2, 62.4), 4.4, 5.6, fc="#2a6fdb", ec="#1b4ea0"))   # 後ろ用ストッパー
+    ax.add_patch(P.Rectangle((x - 1.6, 59.0), 3.2, 2.0, fc="#f2d36b", ec="#a88a2a"))   # 目印テープ
+    # 500mLボトルにケーブルを3周
+    ax.add_patch(P.FancyBboxPatch((x - 3.5, 22), 7, 13, boxstyle="round,pad=0,rounding_size=1.5",
+                                  fc="#dfeffa", ec="#6a8fb0"))
+    for k in range(3):
+        y = 31 - k * 3
+        ax.plot([x - 3.8, x + 3.8], [y + 1.2, y - 0.4], **cable)
+    ax.plot([x, x], [22, 18], color="#444", lw=1.2)                                 # 首の紐
+    ax.add_patch(P.Polygon([[x - 7, 17.5], [x + 7, 17.5], [x + 6, 4], [x - 6, 4]], fc="#f3f3f3", ec="#888"))
+    ax.text(x, 10.5, "水入り\nペットボトル", ha="center", va="center", fontsize=9)
+    ax.add_patch(P.Rectangle((x - 11, -3), 22, 6, fc="#efe6d2", ec="#a08a60"))     # 受け箱
+    kw = dict(fontsize=9.5, va="center", arrowprops=dict(arrowstyle="->", lw=0.8))
+    ax.annotate("④治具の板をC型クランプで机に固定\n（机の縁の線に合わせる）", (34, 66), (2, 86), **kw)
+    ax.annotate("③後ろ用ストッパーを\n板の上面に当てる", (x + 2.2, 65), (62, 72), **kw)
+    ax.annotate("目印のマスキングテープ\n（板とのすき間を紙片で測る）", (x + 1.6, 60), (62, 56), **kw)
+    ax.annotate("500mLボトルにケーブルを3周巻く\n（重さはここで支える）", (x + 3.8, 29), (62, 34), **kw)
+    ax.annotate("袋に水のボトル\n30N ≒ 3.1kg / 40N ≒ 4.1kg", (x + 6.5, 12), (66, 15), **kw)
+    ax.annotate("タオルを敷いた箱\n（落ちても10cm以内）", (x + 11, 0), (67, 2), **kw)
+    ax.annotate("USB-C側は机にテープで留める", (12, 63.6), (2, 74), **kw)
+    ax.set_title("引張試験のやり方（横から見た図）", fontsize=13)
+
+    bx.axis("off")
+    rows = [
+        ("準備", "MagSafeケーブル1本をアダプタから外して机へ。\nストッパーはゲージの数字 S と S−0.2 の2サイズ×3組ずつ"),
+        ("試験A\n30Nを60秒", "約3.1kgをそっと吊るして60秒。\n目印テープのすき間 0.5mm以内なら合格"),
+        ("試験B\n上げ下ろし25回", "同じ重さを1秒ずつ持ち上げ／下ろすを25回。\n合計のずれ 1mm以内なら合格"),
+        ("試験C\n余裕の確認", "吊りはかりでゆっくり引く（40Nで止める）。\n40Nまで滑らない、または滑り始めが36N以上"),
+        ("試験D\n1週間後", "別の3組をケーブルに付けたまま保管庫の上段に\n1週間置く。締め直さずに A〜C をもう一度"),
+        ("判定", "全部の組が合格した一番大きいサイズを量産。\n1組でも不合格なら、そのサイズは使わない"),
+    ]
+    y = 0.95
+    for head, body in rows:
+        bx.text(0.0, y, head, fontsize=11, fontweight="bold", va="top", color="#1b4ea0")
+        bx.text(0.25, y, body, fontsize=10.5, va="top")
+        y -= 0.155
+    bx.text(0.0, 0.03, "40Nより強く引かない（ケーブル保護のため）。試験後は充電できるか必ず確認する。",
+            fontsize=9.5, color="#b03030", va="bottom")
+    bx.set_title("合格ライン", fontsize=13)
+    fig.tight_layout()
+    fig.savefig(IMG / "slip_test.png")
+    plt.close(fig)
+
+
 if __name__ == "__main__":
     IMG.mkdir(exist_ok=True)
     parts_overview()
+    rear_stopper_closeup()
     holder_3d()
     holder_usage()
     install_diagram()
+    slip_test_diagram()
     print("wrote", sorted(p.name for p in IMG.glob("*.png")))
