@@ -1,0 +1,439 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>「人肌恋しい」を満たせる島へ。</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;700&family=Zen+Kaku+Gothic+New:wght@400;700&display=block">
+<style>
+@page { size: A4 landscape; margin: 0; }
+:root {
+  --ink: #1E1E1E; --gray: #8A8A8A; --rule: #DADADA;
+  --ai: #2F5D8C; --ai-l: #E7EEF6; --or: #D9772B; --or-l: #FBEEE2;
+  --mincho: "Shippori Mincho", "Hiragino Mincho ProN", "Noto Serif JP", serif;
+  --gothic: "Zen Kaku Gothic New", "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Noto Sans JP", sans-serif;
+}
+* { box-sizing: border-box; margin: 0; padding: 0;
+    -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+html, body { background: #FFFFFF; }
+/* 小さな文字でも送り幅をピクセルに丸めない（印刷用に、フォント本来の字幅で組む） */
+html { text-rendering: geometricPrecision; }
+body { font-family: var(--gothic); font-weight: 400; color: var(--ink);
+       font-size: 9pt; line-height: 1.68; }
+.page { position: relative; width: 297mm; height: 210mm; overflow: hidden; background: #FFFFFF; }
+
+p, h1, h2, h3 { line-break: strict; word-break: normal; overflow-wrap: normal; }
+p { text-wrap: pretty; }
+.nw { white-space: nowrap; }
+b { font-weight: 700; }
+
+/* 上部の帯 */
+.band { position: absolute; left: 11mm; top: 10mm; width: 275mm; height: 30mm; }
+.tblock { position: absolute; left: 0; top: 0; width: 152mm; }
+.title { font-family: var(--mincho); font-weight: 700; font-size: 28pt; line-height: 1.45;
+         letter-spacing: 0.02em; font-feature-settings: "palt"; }
+.title .acc { color: var(--or); }
+.subtitle { font-family: var(--mincho); font-weight: 400; font-size: 10.5pt; line-height: 1.5;
+            margin-top: 1.3mm; }
+.rblock { position: absolute; right: 0; top: 0; width: 112mm; }
+.meta { font-size: 7.5pt; line-height: 1.4; text-align: right; color: var(--ink); }
+.meta .region { color: var(--gray); margin-right: 4mm; }
+.meta .name { font-weight: 700; font-size: 8pt; }
+.lead { font-size: 9pt; line-height: 1.7; margin-top: 3.2mm; }
+
+/* 3つの段 */
+.col { position: absolute; top: 44.5mm; height: 145mm; display: flex; flex-direction: column; }
+.c1 { left: 11mm; width: 85mm; }
+.c2 { left: 102mm; width: 94mm; }
+.c3 { left: 202mm; width: 84mm; }
+h2 { font-family: var(--mincho); font-weight: 700; font-size: 12pt; line-height: 1.35;
+     letter-spacing: 0.08em; font-feature-settings: "palt"; margin-bottom: 2.2mm; }
+.col p.body { text-indent: 1em; }
+.col p.body + p.body { margin-top: 0.5mm; }
+figure { display: block; }
+figure svg { display: block; overflow: visible; }
+
+/* 左段：段落の頭に小見出しを置く（行を増やさないため、本文と同じ行に組む） */
+.c1 .para + .para, .c1 figure + .para { margin-top: 3.2mm; }
+.c1 .para h3 { display: inline; font-size: 9.5pt; font-weight: 700; line-height: 1; margin-right: 0.9em; }
+.c1 .para p { display: inline; }
+.c1 .para { line-break: strict; text-wrap: pretty; }
+.figS { margin: 3.4mm 0 0; }
+
+/* 中段 */
+.future { font-family: var(--mincho); font-weight: 700; font-size: 15pt; line-height: 1.45;
+          margin-bottom: 3.0mm; }
+.future .acc { color: var(--or); }
+.figB { margin-bottom: 3.2mm; }
+
+/* 右段：縦の時間軸 */
+.tl { position: relative; flex: 1; display: flex; flex-direction: column; padding-left: 3.4mm; }
+.tl svg.axis { position: absolute; left: 0; top: 0; overflow: visible; }
+.ms { font-size: 7.5pt; line-height: 1.35; display: flex; align-items: baseline; }
+.ms .yr { font-weight: 700; margin-right: 1.6mm; }
+.ms .bl { display: inline-block; width: 0; height: 0; vertical-align: baseline; }
+.ms.gray { color: var(--gray); }
+.ms.gray .yr { font-weight: 400; }
+.ms.end { color: var(--or); }
+.ms.end .lb { font-weight: 700; }
+.act { display: flow-root; }
+.act .ah { display: flex; align-items: center; margin-bottom: 0.75mm; }
+.act svg.icon { flex: none; margin-right: 2.6mm; }
+h3 { font-size: 10pt; font-weight: 700; line-height: 1.5; }
+.act p { text-indent: 0; }
+.ms + .act { margin-top: 1.0mm; }
+.act + .ms { margin-top: 2.5mm; }
+.ms + .ms { margin-top: 1.6mm; }
+.ms.push { margin-top: auto; }
+
+/* 出典 */
+.src { position: absolute; left: 11mm; width: 275mm; bottom: 9.5mm; font-size: 6.5pt;
+       line-height: 1.5; color: var(--gray); }
+</style>
+</head>
+<body>
+<div class="page" id="page">
+
+<header class="band">
+  <div class="tblock">
+    <h1 class="title">「<span class="acc">人肌恋しい</span>」を満たせる島へ。</h1>
+    <p class="subtitle">移動の不便が技術で解ける2050年の西之表に、五感で人と会える「ハブ」を。</p>
+  </div>
+  <div class="rblock">
+    <p class="meta"><span class="region">対象地域：鹿児島県西之表市（種子島）</span><span class="name">氏名：【要記入：氏名フルネーム】</span></p>
+    <p class="lead">私は小学生のころまで西之表で育った。友達の家も遊び場も遠く、休日に集まるだけでも親に頼む必要があった。ただ、子どもと高齢者が同じ車を分け合うような仕組みは、2026年のいま、すでに各地にある。では25年後、移動の不便が技術で解けたとき、この島に足りなくなるものは何か。</p>
+  </div>
+</header>
+
+<section class="col c1" id="col1">
+  <h2>2050年の西之表を想像する</h2>
+  <div class="para"><h3>移動</h3><p>西之表では通勤・通学の<b>82.9％</b>を自家用車が担い、乗合バスは<b>0.3％</b>にすぎない。車なしでは動きにくい場所だからこそ、無人タクシーのような技術が根づいていくはずだ。2050年には、子どもも高齢者も、それぞれがいつでもどこへでも移動できるようになっているだろう。</p></div>
+  <div class="para"><h3>暮らし</h3><p>VR技術が進めば、「寂しい」「つまらない」「退屈」はバーチャル空間で満たせるようになる。ただし満たせるのは、五感のうち視覚と聴覚、触覚の一部まで。嗅覚と味覚は、リアルでしか満たせない。仮想空間で会話や楽しさが充実するほど、五感すべてに結びつく<b>「人肌恋しい」という感情の輪郭は、かえって際立っていく</b>のではないか。</p></div>
+  <figure class="figS"><svg id="figS" xmlns="http://www.w3.org/2000/svg"></svg></figure>
+  <div class="para"><h3>西之表だから</h3><p>西之表の子どもの多くは、歩いて友達の家や遊び場へ行ける距離に住んでいない。公民館はあっても、そこへ行くにも車がいる。さらに種子島には転勤で暮らす家族が多く、馬毛島の自衛隊基地が完成すれば、隊員150〜200人程度とその家族も種子島の宿舎で暮らし始める。<b>知り合いの少ない島で育つ子どもほど、人肌恋しさを感じやすい。</b></p></div>
+</section>
+
+<section class="col c2" id="col2">
+  <h2>実現したい未来</h2>
+  <p class="future">「人肌恋しい」を、<br>いつでも満たせる西之表。</p>
+  <figure class="figB"><svg id="figB" xmlns="http://www.w3.org/2000/svg"></svg></figure>
+  <p class="body">移動が当たり前になった先で本当に必要になるのは、移動を支えるサービスの「ハブ」ではないか。無人タクシーの乗り降りの拠点に、人が対面で集まれる場所を重ねる。カフェのいい匂いがして、くつろげて、眠ることもできる。<b>五感を刺激しながら人肌恋しさを満たせる、安らぎの場所を兼ねたハブだ。</b></p>
+  <p class="body">子どものころ、出かけるたびに親への連絡が必要だった。行き先がはっきりしていて大人の目もある公的なハブなら、親も安心して子どもを送り出せる。運転をやめた高齢者にとっても、人に会いに出かける先になる。</p>
+  <p class="body">車が家と家を結ぶ島から、ハブが人と人を結ぶ島へ。島で人と会えた記憶は、子どもがいつか島に戻ってくる理由にもなると私は考える。</p>
+</section>
+
+<section class="col c3" id="col3">
+  <h2>そのために、今から始めること</h2>
+  <div class="tl" id="tl">
+    <svg class="axis" id="figD" xmlns="http://www.w3.org/2000/svg"></svg>
+    <div class="ms"><span class="yr">2026年度</span><i class="bl"></i></div>
+    <div class="act">
+      <div class="ah"><svg class="icon" id="icon1" xmlns="http://www.w3.org/2000/svg"></svg><h3>①ハブを試す</h3></div>
+      <p>公民館や学校の空き時間に、放課後の子どもが集まれる小さなハブを開く。休日の部活動も2026年度から地域へ移り始め、集まる場所とそこへの足が同時に必要になる。どんな場所なら人が来るのか、香りや休める場所も含めて確かめる。</p>
+    </div>
+    <div class="ms"><span class="yr">2027年度</span><i class="bl"></i></div>
+    <div class="act">
+      <div class="ah"><svg class="icon" id="icon2" xmlns="http://www.w3.org/2000/svg"></svg><h3>②移動をつなぐ</h3></div>
+      <p>国は無人の自動運転移動サービスを、2027年度までに100か所以上で実現する目標を掲げる。西之表も実証に手を挙げ、乗り降りの拠点をハブに集める。種子島では2024年度、電気が余って太陽光・風力の発電を止めた日が75日あった。その昼の電気で走らせる。</p>
+    </div>
+    <div class="ms"><span class="yr">2028年</span><i class="bl"></i><span class="lb">次の交通計画</span></div>
+    <div class="act">
+      <div class="ah"><svg class="icon" id="icon3" xmlns="http://www.w3.org/2000/svg"></svg><h3>③ルールを整える</h3></div>
+      <p>子どもがひとりで無人の車に乗るための決まり（予約、見守り、保護者への「着いた」の通知）を、次の交通計画に書き込む。住民調査は18歳以上が対象なので、子どもと転勤してきた家族の声を最初から入れる。</p>
+    </div>
+    <div class="ms gray push"><span class="yr">2030年</span><i class="bl"></i><span class="lb">馬毛島の基地が完成（見込み）</span></div>
+    <div class="ms end"><span class="yr">2050年</span><i class="bl"></i><span class="lb">「人肌恋しい」を満たせる島へ</span></div>
+  </div>
+</section>
+
+<footer class="src" id="src">出典：通勤・通学の手段、住民調査の対象は種子島地域公共交通計画（2023年5月、西之表市・中種子町・南種子町）。自動運転の目標は国土交通白書2024（デジタル田園都市国家構想総合戦略の政府目標）、部活動は文部科学省のガイドライン（2025年12月）、出力抑制は電力広域的運営推進機関の検証資料（2025年8月）、馬毛島の隊員数と宿舎は防衛省の計画資料、基地の完成時期は時事通信の報道による。</footer>
+
+</div>
+
+<script>
+/* ===== 共通 ===== */
+const PX_PER_PT = 96 / 72;
+const C = { ink: '#1E1E1E', gray: '#8A8A8A', rule: '#DADADA', ai: '#2F5D8C', aiL: '#E7EEF6',
+            or: '#D9772B', orL: '#FBEEE2', white: '#FFFFFF' };
+// 色の意味：藍＝バーチャル・技術（VR、無人タクシー）／橙＝リアル・対面・ハブ（人肌）。ほかは墨とグレー。
+const GOTHIC = 'Zen Kaku Gothic New';
+const SW = 1;                       // 全図共通の線幅（pt）≒0.35mm
+const NS = 'http://www.w3.org/2000/svg';
+const r2 = v => Math.round(v * 100) / 100;
+
+function E(parent, tag, attrs) {
+  const e = document.createElementNS(NS, tag);
+  for (const k in attrs) e.setAttribute(k, typeof attrs[k] === 'number' ? r2(attrs[k]) : attrs[k]);
+  if (parent) parent.appendChild(e);
+  return e;
+}
+function T(parent, x, y, s, o = {}) {
+  const a = { x, y, 'font-family': GOTHIC, 'font-size': o.size || 7.5, fill: o.fill || C.ink };
+  if (o.weight === 'bold') a['font-weight'] = 'bold';
+  if (o.anchor) a['text-anchor'] = o.anchor;
+  const e = E(parent, 'text', a);
+  e.textContent = s;
+  return e;
+}
+const tw = e => e.getComputedTextLength();
+function frame(svg, W, H, vbW, vbH) {
+  svg.setAttribute('width', r2(W) + 'pt');
+  svg.setAttribute('height', r2(H) + 'pt');
+  svg.setAttribute('viewBox', `0 0 ${r2(vbW || W)} ${r2(vbH || H)}`);
+}
+function widthPt(el) { return el.getBoundingClientRect().width / PX_PER_PT; }
+function line(p, x1, y1, x2, y2, stroke, o = {}) {
+  const a = { x1, y1, x2, y2, stroke, 'stroke-width': o.sw || SW, 'stroke-linecap': 'round' };
+  if (o.dash) a['stroke-dasharray'] = o.dash;
+  return E(p, 'line', a);
+}
+// 人物：丸い頭と肩だけ。s=1 が大人、子どもは 0.75。(cx, base) は肩の底辺の中央。
+function person(p, cx, base, s, stroke, fill) {
+  const w = 4.9 * s, h = 5.4 * s, hr = 2.35 * s, hy = base - h - 0.9 * s - hr;
+  const g = E(p, 'g', {});
+  E(g, 'path', { d: `M${r2(cx - w)},${r2(base)} C${r2(cx - w)},${r2(base - h * 0.78)} ${r2(cx - w * 0.6)},${r2(base - h)} ${r2(cx)},${r2(base - h)} C${r2(cx + w * 0.6)},${r2(base - h)} ${r2(cx + w)},${r2(base - h * 0.78)} ${r2(cx + w)},${r2(base)} Z`,
+                 fill: fill || C.white, stroke, 'stroke-width': SW, 'stroke-linejoin': 'round' });
+  E(g, 'circle', { cx, cy: hy, r: hr, fill: fill || C.white, stroke, 'stroke-width': SW });
+  return g;
+}
+// 家：五角形の輪郭。(cx, base) は床の中央
+function house(p, cx, base, w = 11, h = 10) {
+  const r = h * 0.42;
+  return E(p, 'path', { d: `M${r2(cx - w / 2)},${r2(base)} V${r2(base - h + r)} L${r2(cx)},${r2(base - h)} L${r2(cx + w / 2)},${r2(base - h + r)} V${r2(base)} Z`,
+                        fill: C.white, stroke: C.ink, 'stroke-width': SW, 'stroke-linejoin': 'round' });
+}
+function chevron(p, x, y, ang, stroke) {   // (x,y) を先端に、角度 ang（ラジアン）の向きの矢じり
+  const L = 2.8, s = 0.65;
+  const a1 = ang + Math.PI - s, a2 = ang + Math.PI + s;
+  return E(p, 'path', { d: `M${r2(x + L * Math.cos(a1))},${r2(y + L * Math.sin(a1))} L${r2(x)},${r2(y)} L${r2(x + L * Math.cos(a2))},${r2(y + L * Math.sin(a2))}`,
+                        fill: 'none', stroke, 'stroke-width': SW, 'stroke-linecap': 'round', 'stroke-linejoin': 'round' });
+}
+const FIG = {};
+
+/* ===== 図S 五感のうち、バーチャルで満たせるもの ===== */
+// 視覚・聴覚はバーチャルで満たせる、触覚は一部、嗅覚・味覚は満たせない。リアルは五感すべて。
+const SENSES = [['視覚', 1], ['聴覚', 1], ['触覚', 0.5], ['嗅覚', 0], ['味覚', 0]];
+function drawFigS() {
+  const svg = document.getElementById('figS');
+  const W = widthPt(svg.parentNode);
+  const labW = 44, gap = 2.4, cw = (W - labW) / SENSES.length, ch = 11;
+  const yHead = 20, yV = 24.5, yR = yV + ch + 3.2, yBr = yR + ch + 2.6;
+  const H = yBr + 17;
+  frame(svg, W, H);
+  T(svg, 0, 8.4, '五感のうち、バーチャルで満たせるもの', { size: 8, weight: 'bold' });
+  SENSES.forEach(([s], i) => T(svg, labW + i * cw + (cw - gap) / 2, yHead, s, { size: 7.5, anchor: 'middle' }));
+  T(svg, 0, yV + ch / 2 + 2.7, 'バーチャル', { size: 7.5, fill: C.ai, weight: 'bold' });
+  T(svg, 0, yR + ch / 2 + 2.7, 'リアル', { size: 7.5, fill: C.or, weight: 'bold' });
+  SENSES.forEach(([s, v], i) => {
+    const x = labW + i * cw, w = cw - gap;
+    // バーチャル：満たせる割合だけ塗る。満たせない部分は罫線色の輪郭で残す
+    if (v < 1) E(svg, 'rect', { x: x + 0.5, y: yV + 0.5, width: w - 1, height: ch - 1, fill: C.white, stroke: C.rule, 'stroke-width': SW });
+    if (v > 0) E(svg, 'rect', { x, y: yV, width: w * v, height: ch, fill: C.ai });
+    // リアル：五感すべて
+    E(svg, 'rect', { x, y: yR, width: w, height: ch, fill: C.or });
+  });
+  // 五感すべてをくくる括弧と、その意味
+  const x0 = labW, x1 = labW + SENSES.length * cw - gap, mid = (x0 + x1) / 2;
+  E(svg, 'path', { d: `M${r2(x0)},${r2(yBr)} V${r2(yBr + 2.4)} H${r2(mid - 3)} L${r2(mid)},${r2(yBr + 4.6)} L${r2(mid + 3)},${r2(yBr + 2.4)} H${r2(x1)} V${r2(yBr)}`,
+                   fill: 'none', stroke: C.or, 'stroke-width': SW, 'stroke-linecap': 'round', 'stroke-linejoin': 'round' });
+  T(svg, mid, yBr + 13, '五感すべてに結びつく「人肌恋しい」', { size: 7.5, fill: C.or, anchor: 'middle', weight: 'bold' });
+  FIG.S = SENSES;
+}
+
+/* ===== 図B 移動の行き先を、家から「ハブ」へ ===== */
+function drawFigB() {
+  const svg = document.getElementById('figB');
+  const W = widthPt(svg.parentNode);
+  const H = 140;
+  frame(svg, W, H);
+  T(svg, 0, 9, '移動の行き先を、家から「ハブ」へ', { size: 9, weight: 'bold' });
+
+  // --- 左：いま（家と家を親の車が結ぶ）
+  const LW = 96;
+  T(svg, 0, 26, 'いま', { size: 8.5, weight: 'bold' });
+  const hs = [[12, 54], [80, 47], [20, 120], [86, 116]];
+  // 親の車：左上の家 → 右下の家（実線）
+  const a = hs[0], b = hs[3];
+  const p0 = [a[0] + 6, a[1] - 2], p1 = [b[0] - 7, b[1] - 6];
+  const cx = (p0[0] + p1[0]) / 2 + 10, cy = (p0[1] + p1[1]) / 2 - 8;
+  E(svg, 'path', { d: `M${r2(p0[0])},${r2(p0[1])} Q${r2(cx)},${r2(cy)} ${r2(p1[0])},${r2(p1[1])}`, fill: 'none', stroke: C.ink, 'stroke-width': SW, 'stroke-linecap': 'round' });
+  chevron(svg, p1[0], p1[1], Math.atan2(p1[1] - cy, p1[0] - cx), C.ink);
+  hs.forEach(([x, y]) => house(svg, x, y));
+  // 車を運転する親と、乗せてもらう子ども
+  const mx = 0.25 * p0[0] + 0.5 * cx + 0.25 * p1[0], my = 0.25 * p0[1] + 0.5 * cy + 0.25 * p1[1];
+  person(svg, mx - 5, my - 2.5, 1, C.ink);
+  person(svg, mx + 6.5, my - 2.5, 0.75, C.ink);
+  T(svg, 0, H - 3, '親の車で、家から家へ', { size: 7.5, fill: C.gray });
+
+  // --- 右：2050年（家々から無人タクシーでハブへ）
+  const RX = LW + 14, RW = W - RX;
+  T(svg, RX, 26, '2050年', { size: 8.5, weight: 'bold', fill: C.or });
+  const hub = { w: 92, h: 52 };
+  hub.x = RX + (RW - hub.w) / 2; hub.y = 60;
+  const hcx = hub.x + hub.w / 2, hcy = hub.y + hub.h / 2;
+  const homes = [[RX + 10, 51], [W - 9, 48], [RX + 8, 126], [W - 10, 124]];
+  // 無人タクシー：家 → ハブ（藍の破線）
+  homes.forEach(([x, y]) => {
+    const sx = x, sy = y - 4;
+    const ex = x < hcx ? hub.x - 2 : hub.x + hub.w + 2;
+    const ey = Math.max(hub.y + 8, Math.min(hub.y + hub.h - 8, sy + (hcy - sy) * 0.55));
+    const sx2 = sx + (x < hcx ? 7 : -7);
+    E(svg, 'path', { d: `M${r2(sx2)},${r2(sy)} L${r2(ex)},${r2(ey)}`, fill: 'none', stroke: C.ai, 'stroke-width': SW, 'stroke-dasharray': '2.4 2', 'stroke-linecap': 'round' });
+    chevron(svg, ex, ey, Math.atan2(ey - sy, ex - sx2), C.ai);
+  });
+  homes.forEach(([x, y]) => house(svg, x, y));
+  T(svg, hcx, hub.y - 10, '無人タクシー', { size: 7.5, fill: C.ai, anchor: 'middle' });
+  // ハブ：人が対面で集まる場所
+  E(svg, 'rect', { x: hub.x, y: hub.y, width: hub.w, height: hub.h, rx: 6, fill: C.orL, stroke: C.or, 'stroke-width': SW });
+  T(svg, hub.x + 7, hub.y + 14, 'ハブ', { size: 9, weight: 'bold', fill: C.or });
+  const base = hub.y + 29;
+  [[hub.x + 41, 1.1], [hub.x + 53, 0.825], [hub.x + 64, 0.825], [hub.x + 77, 1.1]].forEach(([x, s]) => person(svg, x, base, s, C.or));
+  T(svg, hcx, hub.y + hub.h - 8, 'カフェ・くつろぐ・眠る', { size: 7.5, fill: C.or, anchor: 'middle' });
+  T(svg, RX, H - 3, '無人の車で、家からハブへ', { size: 7.5, fill: C.gray });
+}
+
+/* ===== ①②③のアイコン（30×30 の設計座標で描き、pt 単位の10mm角に換算。線幅は 1pt のまま） ===== */
+const ICON_PT = 28.35, ICON_K = ICON_PT / 30;
+function iconFrame(id) { const s = document.getElementById(id); frame(s, ICON_PT, ICON_PT); return s; }
+const st = (stroke = C.ink, o = {}) => Object.assign({ fill: 'none', stroke, 'stroke-width': SW, 'stroke-linecap': 'round', 'stroke-linejoin': 'round' }, o);
+function scalePath(d, k) {
+  const tok = d.match(/[MLHVCQAZ]|-?\d*\.?\d+/g);
+  let cmd = '', idx = 0;
+  return tok.map(t => {
+    if (/[A-Z]/.test(t)) { cmd = t; idx = 0; return t; }
+    const i = idx++;
+    if (cmd === 'A' && [2, 3, 4].includes(i % 7)) return t;
+    return String(r2(parseFloat(t) * k));
+  }).join(' ').replace(/ ([A-Z]) /g, ' $1').replace(/^([A-Z]) /, '$1');
+}
+const GEOM = ['x', 'y', 'width', 'height', 'rx', 'r', 'cx', 'cy', 'x1', 'y1', 'x2', 'y2', 'font-size'];
+function EI(parent, tag, attrs) {
+  const a = Object.assign({}, attrs);
+  GEOM.forEach(g => { if (a[g] !== undefined) a[g] = r2(a[g] * ICON_K); });
+  if (a.d) a.d = scalePath(a.d, ICON_K);
+  return E(parent, tag, a);
+}
+function drawIcons() {
+  // ① ハブを試す：集まれる建物と、香りの立つカップ（湯気だけ橙）
+  let s = iconFrame('icon1');
+  EI(s, 'path', st(C.ink, { d: 'M1.6,27 V13.6 L10.4,6.4 L19.2,13.6 V27 Z' }));
+  EI(s, 'path', st(C.ink, { d: 'M7.8,27 V20 H13 V27' }));
+  EI(s, 'path', st(C.ink, { d: 'M21,19.2 H27.6 V23.6 Q27.6,27 24.3,27 Q21,27 21,23.6 Z', fill: C.white }));
+  EI(s, 'path', st(C.ink, { d: 'M27.6,20.4 Q29.6,20.4 29.6,22.1 Q29.6,23.8 27.6,23.8' }));
+  EI(s, 'path', st(C.or, { d: 'M22.9,17 Q21.9,15.4 22.9,13.8 Q23.9,12.2 22.9,10.6 M25.9,17 Q24.9,15.4 25.9,13.8 Q26.9,12.2 25.9,10.6' }));
+
+  // ② 移動をつなぐ：横から見た小型の車と、太陽から車へつながる細い線
+  s = iconFrame('icon2');
+  const sun = { x: 5.4, y: 5.4, r: 2.1 };
+  EI(s, 'circle', st(C.ink, { cx: sun.x, cy: sun.y, r: sun.r }));
+  for (let i = 0; i < 6; i++) {
+    const t = i * 60 * Math.PI / 180;
+    EI(s, 'line', st(C.ink, { x1: r2(sun.x + 3.3 * Math.cos(t)), y1: r2(sun.y + 3.3 * Math.sin(t)), x2: r2(sun.x + 4.6 * Math.cos(t)), y2: r2(sun.y + 4.6 * Math.sin(t)) }));
+  }
+  EI(s, 'path', st(C.ink, { d: 'M8.6,8.8 Q11.6,10 13.6,12.4', 'stroke-dasharray': '1.2 1.4' }));
+  EI(s, 'path', st(C.ink, { d: 'M2,24 V19.4 Q2,17.8 3.6,17.4 L8.2,16.6 L11.8,12.8 Q12.6,12 13.8,12 H20.4 Q21.6,12 22.4,12.9 L25.6,16.6 Q28.2,17.1 28.2,19.4 V24 Z', fill: C.white }));
+  EI(s, 'path', st(C.ink, { d: 'M12.4,16.4 L14.3,13.9 H19.9 L22.1,16.4 Z' }));
+  [8.2, 22].forEach(cx => EI(s, 'circle', st(C.ink, { cx, cy: 24, r: 2.7, fill: C.white })));
+
+  // ③ ルールを整える：決まりを書いた紙と、保護者に届く知らせの吹き出し
+  s = iconFrame('icon3');
+  EI(s, 'rect', st(C.ink, { x: 3, y: 2.6, width: 16.4, height: 23.4, rx: 1.1 }));
+  EI(s, 'path', st(C.ink, { d: 'M6.6,8.4 H15.8 M6.6,12.4 H15.8 M6.6,16.4 H12.2' }));
+  EI(s, 'path', st(C.ink, { d: 'M16.6,17 H26.8 Q28.6,17 28.6,18.8 V23.4 Q28.6,25.2 26.8,25.2 H21.4 L18.6,28 L19.2,25.2 H16.6 Q14.8,25.2 14.8,23.4 V18.8 Q14.8,17 16.6,17 Z', fill: C.white }));
+  [18.6, 21.7, 24.8].forEach(cx => EI(s, 'circle', { cx, cy: 21.1, r: 0.85, fill: C.ink }));
+}
+
+/* ===== 図D 縦の時間軸（節目の位置を実測して描く） ===== */
+function drawFigD() {
+  const tl = document.getElementById('tl'), svg = document.getElementById('figD');
+  const box = tl.getBoundingClientRect();
+  const Wd = parseFloat(getComputedStyle(tl).paddingLeft) / PX_PER_PT;
+  const H = box.height / PX_PER_PT;
+  frame(svg, Wd, H);
+  const ax = 1.9;
+  const ms = [...tl.querySelectorAll('.ms')].map(m => {
+    const b = m.querySelector('.bl').getBoundingClientRect();
+    const fs = parseFloat(getComputedStyle(m).fontSize) / PX_PER_PT;
+    return { y: (b.top - box.top) / PX_PER_PT - 0.36 * fs, gray: m.classList.contains('gray'), end: m.classList.contains('end') };
+  });
+  line(svg, ax, ms[0].y, ax, ms[ms.length - 1].y, C.ink);
+  ms.forEach(m => E(svg, 'circle', { cx: ax, cy: m.y, r: m.end ? 2.7 : 1.7, fill: m.end ? C.or : (m.gray ? C.gray : C.ink) }));
+  FIG.D = ms;
+}
+
+/* ===== タイトルの字詰め =====
+   Google Fonts 版の Shippori Mincho には palt が入っていないため、
+   同フォント（Bold）のグリフの左右の余白（em）から詰め量を計算して、palt 相当に詰める。 */
+const TITLE_SB = { '人': [0.052, 0.044], '肌': [0.045, 0.046], '恋': [0.05, 0.054], 'し': [0.211, 0.128],
+  'い': [0.103, 0.116], 'を': [0.16, 0.144], '満': [0.04, 0.043], 'た': [0.065, 0.141], 'せ': [0.065, 0.073],
+  'る': [0.187, 0.217], '島': [0.097, 0.047], 'へ': [0.054, 0.065] };
+function kernTitle() {
+  const h1 = document.querySelector('.title');
+  const trim = sb => Math.max(0, sb - 0.08) * 0.8;
+  const walker = document.createTreeWalker(h1, NodeFilter.SHOW_TEXT);
+  const nodes = []; while (walker.nextNode()) nodes.push(walker.currentNode);
+  nodes.forEach(n => {
+    const frag = document.createDocumentFragment();
+    [...n.nodeValue].forEach(ch => {
+      const sp = document.createElement('span'); sp.className = 'k'; sp.textContent = ch;
+      let l = 0, r = 0;
+      if (ch === '「') { l = 0.5; r = 0.12; }         // 括弧と句読点は半角幅に（括弧は内側も少し詰める）
+      else if (ch === '」') { l = 0.12; r = 0.5; }
+      else if (ch === '、') r = 0.5;
+      else if (TITLE_SB[ch]) { l = trim(TITLE_SB[ch][0]); r = trim(TITLE_SB[ch][1]); }
+      sp.style.marginLeft = (-l).toFixed(3) + 'em'; sp.style.marginRight = (-r).toFixed(3) + 'em';
+      frag.appendChild(sp);
+    });
+    n.parentNode.replaceChild(frag, n);
+  });
+}
+
+/* ===== 数字と単位、短いカギ括弧の語を行またぎで分けない ===== */
+function wrapNumbers() {
+  const re = /(?:約)?\d[\d,.]*(?:〜\d+)?(?:％|万円|か月|年度|年間|年\d+月|年代|年|歳以上|歳|時前|時台|時|人程度|人|日|割|か所以上)|「[^「」]{1,6}」/g;
+  const roots = document.querySelectorAll('p, h1, h2, h3, .ms, footer');
+  roots.forEach(root => {
+    const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+    const nodes = [];
+    while (walker.nextNode()) nodes.push(walker.currentNode);
+    nodes.forEach(n => {
+      if (n.parentNode.closest('svg') || n.parentNode.classList.contains('nw') || n.parentNode.classList.contains('k')) return;
+      const s = n.nodeValue; re.lastIndex = 0;
+      if (!re.test(s)) return;
+      re.lastIndex = 0;
+      const frag = document.createDocumentFragment();
+      let last = 0, m;
+      while ((m = re.exec(s))) {
+        if (m.index > last) frag.appendChild(document.createTextNode(s.slice(last, m.index)));
+        const sp = document.createElement('span'); sp.className = 'nw'; sp.textContent = m[0];
+        frag.appendChild(sp); last = m.index + m[0].length;
+      }
+      if (last < s.length) frag.appendChild(document.createTextNode(s.slice(last)));
+      n.parentNode.replaceChild(frag, n);
+    });
+  });
+}
+
+(async function main() {
+  kernTitle();
+  wrapNumbers();
+  await document.fonts.ready;
+  const sample = document.body.innerText + '五感のうち、バーチャルで満たせるもの視覚聴覚触覚嗅覚味覚リアル五感すべてに結びつく「人肌恋しい」移動の行き先を、家から「ハブ」へいま親の車で、家から家へ2050年無人タクシーハブカフェ・くつろぐ・眠る無人の車で、家からハブへ0123456789,';
+  await Promise.all(['normal', 'bold'].flatMap(w => [
+    document.fonts.load(`${w} 10px "Zen Kaku Gothic New"`, sample),
+    document.fonts.load(`${w} 10px "Shippori Mincho"`, sample),
+  ]));
+  drawFigS();
+  drawFigB();
+  drawIcons();
+  await document.fonts.ready;
+  await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+  drawFigD();
+  window.__FIG = FIG;
+  window.__ready = true;
+})();
+</script>
+</body>
+</html>
